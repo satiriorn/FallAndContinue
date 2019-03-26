@@ -50,7 +50,7 @@ AFallAndContinueCharacter::AFallAndContinueCharacter()
 	GetCharacterMovement()->SetPlaneConstraintNormal(FVector(0.0f, -1.0f, 0.0f));
 	GetCharacterMovement()->bUseFlatBaseForFloorChecks = true;
 	JumpHeight = 1100.f;
-	moveRight = false;
+	moveRight = true;
 	ShootTime = 0;
 	Reload = 2;
 	God = 0.0f;
@@ -59,8 +59,11 @@ AFallAndContinueCharacter::AFallAndContinueCharacter()
 	GeneralCountJump = 0.0f;
 	HP = 100.0f;
 	TimeDeadAnim = 0.0f;
+	TimeShootAnim = 0.0f;
+	TimeJumpAnim = 0.0f;
 	GetSprite()->SetIsReplicated(true);
 	bReplicates = true;
+	JumpCount = 0;
 }
 
 void AFallAndContinueCharacter::DoubleJump()
@@ -68,12 +71,21 @@ void AFallAndContinueCharacter::DoubleJump()
 	if (JumpCount <= 1 && GeneralCountJump > 0) {
 		ACharacter::LaunchCharacter(FVector(0,0,JumpHeight),false,true);
 		JumpCount++;
-		GeneralCountJump--;
+		if(JumpCount>1)
+			GeneralCountJump--;
 	}
 	else
 	{
 		Jump();
 	}
+}
+
+void AFallAndContinueCharacter::JumpVoice()
+{
+	if(JumpToRight==true)
+		ACharacter::LaunchCharacter(FVector(500, 0, 800), false, true);
+	else
+		ACharacter::LaunchCharacter(FVector(-500, 0, 800), false, true);
 }
 
 void AFallAndContinueCharacter::OffShoot()
@@ -113,16 +125,18 @@ void AFallAndContinueCharacter::UpdateAnimation()
 	{
 		GetSprite()->SetFlipbook(DesiredAnimation);
 	}
-	else if (JumpCount > 0 && DesiredAnimation != JumpAnimation)
+	else if (JumpCount > 0 && DesiredAnimation != JumpAnimation&& TimeJumpAnim<=0.0f)
 	{
 		DesiredAnimation = JumpAnimation;
 		GetSprite()->SetFlipbook(DesiredAnimation);
+		TimeJumpAnim = 2.0;
 
 	}
-	else if (NeedShoot == true && DesiredAnimation!=ShootAnimation)
+	else if (NeedShoot == true && DesiredAnimation!=ShootAnimation&& TimeShootAnim<=0.0f)
 	{
 		DesiredAnimation = ShootAnimation;
 		GetSprite()->SetFlipbook(DesiredAnimation);
+		TimeShootAnim = 1.3;
 	}
 	else if(HP<=0.0f&&DesiredAnimation!=FallAnimation&&TimeDeadAnim==0.0f)
 	{
@@ -131,7 +145,7 @@ void AFallAndContinueCharacter::UpdateAnimation()
 		TimeDeadAnim = 2.0f;
 		
 	}
-	else if(JumpCount == 0 && NeedShoot == false && ShootTime < 1.0f && TimeDeadAnim == 0.0f)	
+	else if(JumpCount == 0 && NeedShoot == false && ShootTime < 1.0f && TimeDeadAnim == 0.0f && TimeShootAnim <= 0.0f && TimeJumpAnim <= 0.0f)
 	{
 		DesiredAnimation = (PlayerSpeedSqr > 0.0f) ? RunningAnimation : IdleAnimation;
 	}
@@ -142,14 +156,16 @@ void AFallAndContinueCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	UpdateCharacter();	
-	if (ShootTime > 0.0f) {
+	if (ShootTime > 0.0f) 
 		ShootTime -= DeltaSeconds;
-	}
 	if (God > 0.0f)
 		God -= DeltaSeconds;
-	if (TimeDeadAnim > 0.0f) {
+	if (TimeDeadAnim > 0.0f) 
 		TimeDeadAnim -= DeltaSeconds;
-	}
+	if (TimeShootAnim > 0.0f)
+		TimeShootAnim -= DeltaSeconds;
+	if (TimeJumpAnim > 0.0f)
+		TimeJumpAnim -= DeltaSeconds;
 }
 
 void AFallAndContinueCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)

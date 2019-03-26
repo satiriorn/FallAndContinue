@@ -15,6 +15,7 @@ class UTextRenderComponent;
  * The CharacterMovementComponent (inherited from ACharacter) handles movement of the collision capsule
  * The Sprite component (inherited from APaperCharacter) handles the visuals
  */
+
 UCLASS(config=Game)
 class AFallAndContinueCharacter : public APaperCharacter
 {
@@ -63,14 +64,18 @@ protected:
 
 public:
 	AFallAndContinueCharacter();
-	UFUNCTION(BlueprintCallable, Category= Jump)
+	UFUNCTION(BlueprintCallable, Category=Jump)
 		void DoubleJump();
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category = Jump)
+		void JumpVoice();
+	UFUNCTION(BlueprintCallable, Category = Shoot)
 		void OffShoot();
 	UFUNCTION()
 		void TimeGod();
-	UFUNCTION(BlueprintCallable, Category= Shoot)
+	UFUNCTION(BlueprintCallable, Category = Shoot)
 		void Shoot();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool JumpToRight;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int JumpCount;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -97,7 +102,10 @@ public:
 		float TimerGod;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float TimeDeadAnim;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float TimeShootAnim;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float TimeJumpAnim;
 	FORCEINLINE class UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }
  
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

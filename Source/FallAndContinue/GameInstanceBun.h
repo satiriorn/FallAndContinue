@@ -16,18 +16,6 @@ class FALLANDCONTINUE_API UGameInstanceBun : public UGameInstance
 public:
 	UGameInstanceBun();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float CountJump;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float JumpPrec;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float HP;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float HpPrec;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int CountRestart;
-	UFUNCTION()
-		void HpRate();
-	UFUNCTION()
-		void JumpRate();
 
 };
