@@ -63,13 +63,13 @@ protected:
 
 public:
 	AFallAndContinueCharacter();
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category= Jump)
 		void DoubleJump();
 	UFUNCTION()
 		void OffShoot();
 	UFUNCTION()
 		void TimeGod();
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category= Shoot)
 		void Shoot();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int JumpCount;
