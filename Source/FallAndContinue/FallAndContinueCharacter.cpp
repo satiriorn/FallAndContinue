@@ -125,18 +125,18 @@ void AFallAndContinueCharacter::UpdateAnimation()
 	{
 		GetSprite()->SetFlipbook(DesiredAnimation);
 	}
-	else if (JumpCount > 0 && DesiredAnimation != JumpAnimation)
+	else if (JumpCount > 0 && DesiredAnimation != JumpAnimation&&TimeJumpAnim<=0.0f)
 	{
 		DesiredAnimation = JumpAnimation;
 		GetSprite()->SetFlipbook(DesiredAnimation);
-		TimeJumpAnim = 2.0;
+		TimeJumpAnim = 1.5;
 
 	}
 	else if (NeedShoot == true && DesiredAnimation!=ShootAnimation&& TimeShootAnim<=0.0f)
 	{
 		DesiredAnimation = ShootAnimation;
 		GetSprite()->SetFlipbook(DesiredAnimation);
-		TimeShootAnim = 1.3;
+		TimeShootAnim = 1.1;
 	}
 	else if(HP<=0.0f&&DesiredAnimation!=FallAnimation&&TimeDeadAnim==0.0f)
 	{
@@ -145,7 +145,7 @@ void AFallAndContinueCharacter::UpdateAnimation()
 		TimeDeadAnim = 2.0f;
 		
 	}
-	else if(JumpCount == 0 && NeedShoot == false && ShootTime < 1.0f && TimeDeadAnim == 0.0f && TimeShootAnim <= 0.0f)
+	else if(JumpCount == 0 && NeedShoot == false && ShootTime < 1.0f && TimeDeadAnim == 0.0f && TimeShootAnim <= 0.0f&&TimeJumpAnim <= 0.0f)
 	{
 		DesiredAnimation = (PlayerSpeedSqr > 0.0f) ? RunningAnimation : IdleAnimation;
 	}
