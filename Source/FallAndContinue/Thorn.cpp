@@ -5,12 +5,12 @@
 AThorn::AThorn(const FObjectInitializer& ObjectInitializer):Super(ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = true;
-	USphereComponent* SphereComponent = ObjectInitializer.CreateDefaultSubobject<USphereComponent>(this, TEXT("RootComponent"));
-	Mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Mesh"));
+	USphereComponent* SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("RootComponent"));
 	RootComponent = SphereComponent;
-	SphereComponent->InitSphereRadius(25.0f);
+	SphereComponent->InitSphereRadius(50.0f);
 	SphereComponent->SetCollisionProfileName(TEXT("Pawn"));
 	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AThorn::OnOverlap);
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 }
 
 void AThorn::BeginPlay()
