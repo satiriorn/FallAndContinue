@@ -127,7 +127,7 @@ void AFallAndContinueCharacter::UpdateAnimation()
 	{
 		DesiredAnimation = JumpAnimation;
 		GetSprite()->SetFlipbook(DesiredAnimation);
-		TimeJumpAnim = 1.5;
+		TimeJumpAnim = 1.3;
 
 	}
 	else if (NeedShoot == true && DesiredAnimation!=ShootAnimation&& TimeShootAnim<=0.0f)
