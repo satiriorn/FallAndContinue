@@ -25,10 +25,10 @@ void AGun::Shoot()
 {
 	if (ShootTime <= 0.0f) {
 		NeedShoot = true;
-		FVector location = GetActorLocation();
+		Location = GetActorLocation();
 		FRotator rotation = GetActorRotation();
 		UWorld *WRLD = GetWorld();
-		WRLD->SpawnActor(ActorToSpawn, &location, &rotation);
+		WRLD->SpawnActor(ActorToSpawn, &Location, &rotation);
 		ShootTime = Reload;
 	}
 }

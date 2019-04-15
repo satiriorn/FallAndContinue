@@ -29,6 +29,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float Reload;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FVector Location;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool NeedShoot;
 	virtual void Tick(float DeltaTime) override;
 
