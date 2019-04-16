@@ -4,10 +4,10 @@
 #include "Gun.h"
 #include "Engine/World.h"
 
-// Sets default values
+
 AGun::AGun()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+
 	PrimaryActorTick.bCanEverTick = true;
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	ShootTime = 0.0f;
