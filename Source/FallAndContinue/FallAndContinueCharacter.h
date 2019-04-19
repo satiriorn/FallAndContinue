@@ -43,6 +43,9 @@ protected:
 	class UPaperFlipbook* JumpAnimation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
+		class UPaperFlipbook* DefenceAnimation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 	class UPaperFlipbook* ShootAnimation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
@@ -53,6 +56,8 @@ protected:
 	void MoveRight(float Value);
 
 	void UpdateCharacter();
+	
+	void Defence();
 
 	void TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location);
 
@@ -89,6 +94,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool GodTrue;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool DefenceActivate;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool moveRight;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float God;
@@ -106,6 +113,8 @@ public:
 		float TimeShootAnim;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float TimeJumpAnim;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float TimeDefenceAnim;
 	FORCEINLINE class UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }
  
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

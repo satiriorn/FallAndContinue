@@ -47,21 +47,28 @@ AFallAndContinueCharacter::AFallAndContinueCharacter()
 	GetCharacterMovement()->bConstrainToPlane = true;
 	GetCharacterMovement()->SetPlaneConstraintNormal(FVector(0.0f, -1.0f, 0.0f));
 	GetCharacterMovement()->bUseFlatBaseForFloorChecks = true;
-	JumpHeight = 1100.f;
-	moveRight = true;
+	
+
 	ShootTime = 0;
 	Reload = 2;
 	God = 0.0f;
-	GodTrue = false;
-	NeedShoot = false;
-	GeneralCountJump = 0.0f;
 	HP = 100.0f;
+
 	TimeDeadAnim = 0.0f;
 	TimeShootAnim = 0.0f;
 	TimeJumpAnim = 0.0f;
+	TimeDefenceAnim = 0.0f;
+
 	GetSprite()->SetIsReplicated(true);
+	GodTrue = false;
+	NeedShoot = false;
 	bReplicates = true;
+	moveRight = true;
+	DefenceActivate = false;
+
+	GeneralCountJump = 0.0f;
 	JumpCount = 0;
+	JumpHeight = 1100.f;
 }
 
 void AFallAndContinueCharacter::DoubleJump()
@@ -136,6 +143,10 @@ void AFallAndContinueCharacter::UpdateAnimation()
 		GetSprite()->SetFlipbook(DesiredAnimation);
 		TimeShootAnim = 1.1;
 	}
+	else if (DefenceActivate == true && DesiredAnimation != DefenceAnimation) {
+		DesiredAnimation = DefenceAnimation;
+		GetSprite()->SetFlipbook(DesiredAnimation);
+	}
 	else if(HP<=0.0f&&DesiredAnimation!=FallAnimation&&TimeDeadAnim==0.0f)
 	{
 		DesiredAnimation = FallAnimation;
@@ -143,7 +154,8 @@ void AFallAndContinueCharacter::UpdateAnimation()
 		TimeDeadAnim = 2.0f;
 		
 	}
-	else if(JumpCount == 0 && NeedShoot == false && ShootTime < 1.0f && TimeDeadAnim == 0.0f && TimeShootAnim <= 0.0f&&TimeJumpAnim <= 0.0f)
+	else if(JumpCount == 0 && NeedShoot == false && ShootTime < 1.0f && TimeDeadAnim == 0.0f && TimeShootAnim <= 0.0f&&TimeJumpAnim <= 0.0f
+		&& DefenceActivate == false)
 	{
 		DesiredAnimation = (PlayerSpeedSqr > 0.0f) ? RunningAnimation : IdleAnimation;
 	}
@@ -175,6 +187,7 @@ void AFallAndContinueCharacter::SetupPlayerInputComponent(class UInputComponent*
 	PlayerInputComponent->BindAction("Fire", IE_Released, this, &AFallAndContinueCharacter::OffShoot);
 	PlayerInputComponent->BindTouch(IE_Pressed, this, &AFallAndContinueCharacter::TouchStarted);
 	PlayerInputComponent->BindTouch(IE_Released, this, &AFallAndContinueCharacter::TouchStopped);
+	PlayerInputComponent->BindAction("Defence", IE_Pressed, this, &AFallAndContinueCharacter::Defence);
 }
 
 void AFallAndContinueCharacter::Landed(const FHitResult& Hit)
@@ -218,4 +231,7 @@ void AFallAndContinueCharacter::UpdateCharacter()
 			Controller->SetControlRotation(FRotator(0.0f, 0.0f, 0.0f));
 		}
 	}
+}
+void AFallAndContinueCharacter::Defence() {
+	DefenceActivate = true;
 }
