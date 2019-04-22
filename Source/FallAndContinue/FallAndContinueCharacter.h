@@ -51,6 +51,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 		class UPaperFlipbook* FallAnimation;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Sprites)
+		UPaperFlipbook* ThoughtsSprite;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Thoughts)
+		class UPaperFlipbook* DIE;
+
 	void UpdateAnimation();
 
 	void MoveRight(float Value);
@@ -77,6 +83,8 @@ public:
 		void OffShoot();
 	UFUNCTION()
 		void TimeGod();
+	UFUNCTION(BlueprintCallable, Category = Thoughts)
+		void Thoughts();
 	UFUNCTION(BlueprintCallable, Category = Shoot)
 		void Shoot();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

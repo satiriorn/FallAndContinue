@@ -21,6 +21,8 @@ AFallAndContinueCharacter::AFallAndContinueCharacter()
 	GetCapsuleComponent()->SetCapsuleHalfHeight(30.0f);
 	GetCapsuleComponent()->SetCapsuleRadius(30.0f);
 
+	ThoughtsSprite = CreateDefaultSubobject<UPaperFlipbook>(TEXT("ThoughtsSprite"));
+
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 500.0f;
@@ -47,7 +49,6 @@ AFallAndContinueCharacter::AFallAndContinueCharacter()
 	GetCharacterMovement()->bConstrainToPlane = true;
 	GetCharacterMovement()->SetPlaneConstraintNormal(FVector(0.0f, -1.0f, 0.0f));
 	GetCharacterMovement()->bUseFlatBaseForFloorChecks = true;
-	
 
 	ShootTime = 0;
 	Reload = 2;
@@ -216,7 +217,8 @@ void AFallAndContinueCharacter::TouchStopped(const ETouchIndex::Type FingerIndex
 
 void AFallAndContinueCharacter::UpdateCharacter()
 {
-	UpdateAnimation();
+	//UpdateAnimation();
+	Thoughts();
 	TimeGod();
 	const FVector PlayerVelocity = GetVelocity();	
 	float TravelDirection = PlayerVelocity.X;
@@ -234,4 +236,7 @@ void AFallAndContinueCharacter::UpdateCharacter()
 }
 void AFallAndContinueCharacter::Defence() {
 	DefenceActivate = true;
+}
+void AFallAndContinueCharacter::Thoughts() {
+	ThoughtsSprite = (HP < 100.0f) ? DIE : NULL;
 }
