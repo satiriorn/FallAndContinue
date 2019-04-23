@@ -21,8 +21,6 @@ AFallAndContinueCharacter::AFallAndContinueCharacter()
 	GetCapsuleComponent()->SetCapsuleHalfHeight(30.0f);
 	GetCapsuleComponent()->SetCapsuleRadius(30.0f);
 
-	ThoughtsSprite = CreateDefaultSubobject<UPaperFlipbook>(TEXT("ThoughtsSprite"));
-
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 500.0f;
@@ -58,7 +56,8 @@ AFallAndContinueCharacter::AFallAndContinueCharacter()
 	TimeDeadAnim = 0.0f;
 	TimeShootAnim = 0.0f;
 	TimeJumpAnim = 0.0f;
-	TimeDefenceAnim = 0.0f;
+
+	TimeDefence = 0.0f;
 
 	GetSprite()->SetIsReplicated(true);
 	GodTrue = false;
@@ -70,6 +69,7 @@ AFallAndContinueCharacter::AFallAndContinueCharacter()
 	GeneralCountJump = 0.0f;
 	JumpCount = 0;
 	JumpHeight = 1100.f;
+
 }
 
 void AFallAndContinueCharacter::DoubleJump()
@@ -144,9 +144,10 @@ void AFallAndContinueCharacter::UpdateAnimation()
 		GetSprite()->SetFlipbook(DesiredAnimation);
 		TimeShootAnim = 1.1;
 	}
-	else if (DefenceActivate == true && DesiredAnimation != DefenceAnimation) {
+	else if (DefenceActivate == true && DesiredAnimation != DefenceAnimation && TimeDefence <=0.0f) {
 		DesiredAnimation = DefenceAnimation;
 		GetSprite()->SetFlipbook(DesiredAnimation);
+		TimeDefence = 2.0f;
 	}
 	else if(HP<=0.0f&&DesiredAnimation!=FallAnimation&&TimeDeadAnim==0.0f)
 	{
@@ -177,6 +178,14 @@ void AFallAndContinueCharacter::Tick(float DeltaSeconds)
 		TimeShootAnim -= DeltaSeconds;
 	if (TimeJumpAnim > 0.0f)
 		TimeJumpAnim -= DeltaSeconds;
+	if (TimeDefence > 0.0f) {
+		TimeDefence -= DeltaSeconds;
+	}
+	else {
+		DefenceActivate = false;
+	}
+
+
 }
 
 void AFallAndContinueCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -217,8 +226,7 @@ void AFallAndContinueCharacter::TouchStopped(const ETouchIndex::Type FingerIndex
 
 void AFallAndContinueCharacter::UpdateCharacter()
 {
-	//UpdateAnimation();
-	Thoughts();
+	UpdateAnimation();
 	TimeGod();
 	const FVector PlayerVelocity = GetVelocity();	
 	float TravelDirection = PlayerVelocity.X;
@@ -235,8 +243,6 @@ void AFallAndContinueCharacter::UpdateCharacter()
 	}
 }
 void AFallAndContinueCharacter::Defence() {
+
 	DefenceActivate = true;
-}
-void AFallAndContinueCharacter::Thoughts() {
-	ThoughtsSprite = (HP < 100.0f) ? DIE : NULL;
 }

@@ -41,7 +41,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 	class UPaperFlipbook* JumpAnimation;
-
+	 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 		class UPaperFlipbook* DefenceAnimation;
 
@@ -50,12 +50,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 		class UPaperFlipbook* FallAnimation;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Sprites)
-		UPaperFlipbook* ThoughtsSprite;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Thoughts)
-		class UPaperFlipbook* DIE;
 
 	void UpdateAnimation();
 
@@ -83,8 +77,6 @@ public:
 		void OffShoot();
 	UFUNCTION()
 		void TimeGod();
-	UFUNCTION(BlueprintCallable, Category = Thoughts)
-		void Thoughts();
 	UFUNCTION(BlueprintCallable, Category = Shoot)
 		void Shoot();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -106,6 +98,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool moveRight;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool ShootPosition;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float God;
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<AActor> ActorToSpawn;
@@ -122,7 +116,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float TimeJumpAnim;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float TimeDefenceAnim;
+		float TimeDefence;
+
 	FORCEINLINE class UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }
  
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
