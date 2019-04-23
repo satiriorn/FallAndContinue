@@ -243,6 +243,5 @@ void AFallAndContinueCharacter::UpdateCharacter()
 	}
 }
 void AFallAndContinueCharacter::Defence() {
-
 	DefenceActivate = true;
 }
