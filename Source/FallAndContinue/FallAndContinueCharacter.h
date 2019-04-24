@@ -56,8 +56,9 @@ protected:
 	void MoveRight(float Value);
 
 	void UpdateCharacter();
-	
-	void Defence();
+
+	UFUNCTION(BlueprintCallable, Category = Defence)
+		void Defence();
 
 	void TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location);
 
@@ -75,6 +76,8 @@ public:
 		void JumpVoice();
 	UFUNCTION(BlueprintCallable, Category = Shoot)
 		void OffShoot();
+	UFUNCTION(BlueprintCallable, Category = VoiceControl)
+		void VoiceControl(float value);
 	UFUNCTION()
 		void TimeGod();
 	UFUNCTION(BlueprintCallable, Category = Shoot)

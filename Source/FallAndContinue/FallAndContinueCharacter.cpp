@@ -147,7 +147,7 @@ void AFallAndContinueCharacter::UpdateAnimation()
 	else if (DefenceActivate == true && DesiredAnimation != DefenceAnimation && TimeDefence <=0.0f) {
 		DesiredAnimation = DefenceAnimation;
 		GetSprite()->SetFlipbook(DesiredAnimation);
-		TimeDefence = 2.0f;
+		TimeDefence = 2.4f;
 	}
 	else if(HP<=0.0f&&DesiredAnimation!=FallAnimation&&TimeDeadAnim==0.0f)
 	{
@@ -242,6 +242,13 @@ void AFallAndContinueCharacter::UpdateCharacter()
 		}
 	}
 }
+
 void AFallAndContinueCharacter::Defence() {
 	DefenceActivate = true;
 }
+
+void AFallAndContinueCharacter::VoiceControl(float value) {
+	AddMovementInput(FVector(1.0f, 0.0f, 0.0f), value);
+}
+
+
