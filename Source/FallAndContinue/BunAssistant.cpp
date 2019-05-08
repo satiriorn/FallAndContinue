@@ -4,6 +4,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "ConstructorHelpers.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -38,7 +39,11 @@ ABunAssistant::ABunAssistant()
 	GetCharacterMovement()->GroundFriction = 3.f;
 	GetCharacterMovement()->MaxWalkSpeed = 600.f;
 	GetCharacterMovement()->MaxFlySpeed = 600.f;
-
+	//ACharacter* myCharacter = Cast<ACharacter>(GetOwner());
+	//USkeletalMeshComponent* a = GetMesh().PlayAnimation(Anim, true);
+	static ConstructorHelpers::FObjectFinder<UAnimSequence> anim(TEXT("AnimSequence'/Game/ModularRPGHeroesPolyart/Animations/BowStance/Attack01_BowAnim'"));
+	Anim = anim.Object;
+	GetMesh()->PlayAnimation(Anim, false);
 }
 
 
@@ -54,13 +59,13 @@ void ABunAssistant::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 
 void ABunAssistant::MoveRight(float Value)
 {
-	// add movement in that direction
 	AddMovementInput(FVector(0.f, -1.f, 0.f), Value);
 }
 
 void ABunAssistant::TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
 	Jump();
+	//GetMesh()->PlayAnimation(Anim, true);
 }
 
 void ABunAssistant::TouchStopped(const ETouchIndex::Type FingerIndex, const FVector Location)
