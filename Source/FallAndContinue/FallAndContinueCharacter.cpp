@@ -69,7 +69,6 @@ AFallAndContinueCharacter::AFallAndContinueCharacter()
 	GeneralCountJump = 0.0f;
 	JumpCount = 0;
 	JumpHeight = 1100.f;
-
 }
 
 void AFallAndContinueCharacter::DoubleJump()

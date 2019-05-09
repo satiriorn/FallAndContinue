@@ -39,11 +39,11 @@ ABunAssistant::ABunAssistant()
 	GetCharacterMovement()->GroundFriction = 3.f;
 	GetCharacterMovement()->MaxWalkSpeed = 600.f;
 	GetCharacterMovement()->MaxFlySpeed = 600.f;
-	//ACharacter* myCharacter = Cast<ACharacter>(GetOwner());
+	ACharacter* myCharacter = Cast<ACharacter>(GetOwner());
 	//USkeletalMeshComponent* a = GetMesh().PlayAnimation(Anim, true);
-	static ConstructorHelpers::FObjectFinder<UAnimSequence> anim(TEXT("AnimSequence'/Game/ModularRPGHeroesPolyart/Animations/BowStance/Attack01_BowAnim'"));
-	Anim = anim.Object;
-	GetMesh()->PlayAnimation(Anim, false);
+	static ConstructorHelpers::FObjectFinder<UAnimSequence> anim(TEXT("AnimSequence'/Game/ModularRPGHeroesPolyart/Animations/BowStance/Attack01_BowAnim.Attack01_BowAnim'"));
+	
+
 }
 
 
@@ -65,6 +65,8 @@ void ABunAssistant::MoveRight(float Value)
 void ABunAssistant::TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
 	Jump();
+	static ConstructorHelpers::FObjectFinder<UAnimSequence> anim(TEXT("AnimSequence'/Game/ModularRPGHeroesPolyart/Animations/BowStance/Attack01_BowAnim.Attack01_BowAnim'"));
+    GetMesh()->SetAnimInstance(anim.Object);
 	//GetMesh()->PlayAnimation(Anim, true);
 }
 
