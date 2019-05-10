@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "BunAssistant.generated.h"
 
+
 UCLASS(config = Game)
 class ABunAssistant : public ACharacter
 {
@@ -17,7 +18,9 @@ class ABunAssistant : public ACharacter
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* CameraBoom;
-
+		
+	virtual void Tick(float DeltaSeconds) override;
+	
 protected:
 
 	void MoveRight(float Val);
@@ -28,12 +31,16 @@ protected:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
+	void UpdateAnimations();
+	
+	class UAnimSequence* RunAnimation; 
+
+	class UAnimSequence* IdleAnimation;
 
 public:
-
+	void BeginPlay();
+	
 	ABunAssistant();
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-		UAnimSequence *Anim;
 	FORCEINLINE class UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 

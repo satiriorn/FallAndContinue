@@ -7,6 +7,7 @@
 #include "ConstructorHelpers.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Animation/AnimNotifies/AnimNotify.h"
 
 ABunAssistant::ABunAssistant()
 {
@@ -39,14 +40,27 @@ ABunAssistant::ABunAssistant()
 	GetCharacterMovement()->GroundFriction = 3.f;
 	GetCharacterMovement()->MaxWalkSpeed = 600.f;
 	GetCharacterMovement()->MaxFlySpeed = 600.f;
-	ACharacter* myCharacter = Cast<ACharacter>(GetOwner());
-	//USkeletalMeshComponent* a = GetMesh().PlayAnimation(Anim, true);
-	static ConstructorHelpers::FObjectFinder<UAnimSequence> anim(TEXT("AnimSequence'/Game/ModularRPGHeroesPolyart/Animations/BowStance/Attack01_BowAnim.Attack01_BowAnim'"));
-	
-
+	ConstructorHelpers::FObjectFinder<USkeletalMesh>SKmodel(TEXT("/Game/ModularRPGHeroesPolyart/Meshes/OneMeshCharacters/CommonerSK.CommonerSK"));
+	ConstructorHelpers::FObjectFinder<UAnimSequence>RunAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/MagicWandStance/Sprint_MagicWandAnim.Sprint_MagicWandAnim"));
+	ConstructorHelpers::FObjectFinder<UAnimSequence>IdleAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/MagicWandStance/Idle_MagicWandAnim.Idle_MagicWandAnim"));
+	RunAnimation= RunAnim.Object;
+	IdleAnimation = IdleAnim.Object;
+	GetMesh()->SetSkeletalMesh(SKmodel.Object);
 }
 
+void ABunAssistant::BeginPlay()
+{
+	Super::BeginPlay();
 
+}
+void ABunAssistant::UpdateAnimations(){
+	const FVector PlayerVelocity = GetVelocity();
+	const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
+	static UAnimSequence* DesiredAnimation = (PlayerSpeedSqr > 0.0f) ? RunAnimation : IdleAnimation;
+    //UE_LOG( LogTemp, Warning, TEXT("ANIMATION FROM MESH: %s "), PlayAnimation);
+	GetMesh()->PlayAnimation(DesiredAnimation, true);
+	
+}
 void ABunAssistant::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
@@ -65,11 +79,12 @@ void ABunAssistant::MoveRight(float Value)
 void ABunAssistant::TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
 	Jump();
-	static ConstructorHelpers::FObjectFinder<UAnimSequence> anim(TEXT("AnimSequence'/Game/ModularRPGHeroesPolyart/Animations/BowStance/Attack01_BowAnim.Attack01_BowAnim'"));
-    GetMesh()->SetAnimInstance(anim.Object);
-	//GetMesh()->PlayAnimation(Anim, true);
 }
-
+void ABunAssistant::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	UpdateAnimations();
+}
 void ABunAssistant::TouchStopped(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
 	StopJumping();
