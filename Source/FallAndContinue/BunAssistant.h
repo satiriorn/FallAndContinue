@@ -36,11 +36,13 @@ protected:
 	class UAnimSequence* RunAnimation; 
 
 	class UAnimSequence* IdleAnimation;
-
+	
 public:
 	void BeginPlay();
 	
 	ABunAssistant();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Varibl;
 	FORCEINLINE class UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 

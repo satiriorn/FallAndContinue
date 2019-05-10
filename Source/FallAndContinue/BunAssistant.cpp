@@ -40,9 +40,11 @@ ABunAssistant::ABunAssistant()
 	GetCharacterMovement()->GroundFriction = 3.f;
 	GetCharacterMovement()->MaxWalkSpeed = 600.f;
 	GetCharacterMovement()->MaxFlySpeed = 600.f;
+	
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>SKmodel(TEXT("/Game/ModularRPGHeroesPolyart/Meshes/OneMeshCharacters/CommonerSK.CommonerSK"));
 	ConstructorHelpers::FObjectFinder<UAnimSequence>RunAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/MagicWandStance/Sprint_MagicWandAnim.Sprint_MagicWandAnim"));
 	ConstructorHelpers::FObjectFinder<UAnimSequence>IdleAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/MagicWandStance/Idle_MagicWandAnim.Idle_MagicWandAnim"));
+	
 	RunAnimation= RunAnim.Object;
 	IdleAnimation = IdleAnim.Object;
 	GetMesh()->SetSkeletalMesh(SKmodel.Object);
@@ -53,13 +55,22 @@ void ABunAssistant::BeginPlay()
 	Super::BeginPlay();
 
 }
-void ABunAssistant::UpdateAnimations(){
+void ABunAssistant::UpdateAnimations()
+{
 	const FVector PlayerVelocity = GetVelocity();
 	const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
-	static UAnimSequence* DesiredAnimation = (PlayerSpeedSqr > 0.0f) ? RunAnimation : IdleAnimation;
-    //UE_LOG( LogTemp, Warning, TEXT("ANIMATION FROM MESH: %s "), PlayAnimation);
-	GetMesh()->PlayAnimation(DesiredAnimation, true);
+	static UAnimSequence* DesiredAnimation;
+	if(PlayerSpeedSqr>0.0f&&DesiredAnimation!=RunAnimation){
+		DesiredAnimation=RunAnimation;
+		GetMesh()->OverrideAnimationData(RunAnimation, true, true);
+	}
+	else if(PlayerSpeedSqr==0.0f&&DesiredAnimation!=IdleAnimation){
+		DesiredAnimation=IdleAnimation;
+		GetMesh()->OverrideAnimationData(IdleAnimation, true, true);
+		
+	}
 	
+
 }
 void ABunAssistant::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -79,6 +90,7 @@ void ABunAssistant::MoveRight(float Value)
 void ABunAssistant::TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
 	Jump();
+	GetMesh()->OverrideAnimationData(RunAnimation, true, true);
 }
 void ABunAssistant::Tick(float DeltaSeconds)
 {
