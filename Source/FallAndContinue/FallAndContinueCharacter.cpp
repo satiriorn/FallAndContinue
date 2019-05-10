@@ -53,11 +53,7 @@ AFallAndContinueCharacter::AFallAndContinueCharacter()
 	God = 0.0f;
 	HP = 100.0f;
 
-	TimeDeadAnim = 0.0f;
-	TimeShootAnim = 0.0f;
-	TimeJumpAnim = 0.0f;
-
-	TimeDefence = 0.0f;
+	TimeDeadAnim = TimeJumpAnim = TimeShootAnim = TimeDefence = 0.0f;
 
 	GetSprite()->SetIsReplicated(true);
 	GodTrue = false;

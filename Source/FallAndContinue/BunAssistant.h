@@ -28,6 +28,10 @@ protected:
 	void TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location);
 
 	void TouchStopped(const ETouchIndex::Type FingerIndex, const FVector Location);
+	
+	void Jump();
+	
+	void StopJump();
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
@@ -37,13 +41,22 @@ protected:
 
 	class UAnimSequence* IdleAnimation;
 	
+	class UAnimSequence* JumpAnimation;
+	
 public:
 	void BeginPlay();
 	
 	ABunAssistant();
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Varibl;
+	
+	float JumpCount;
+	
+	float JumpHeight;
+	
 	FORCEINLINE class UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }
+	
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 
 };

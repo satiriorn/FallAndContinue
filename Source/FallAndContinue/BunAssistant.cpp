@@ -41,10 +41,15 @@ ABunAssistant::ABunAssistant()
 	GetCharacterMovement()->MaxWalkSpeed = 600.f;
 	GetCharacterMovement()->MaxFlySpeed = 600.f;
 	
+	JumpCount = 0;
+	JumpHeight = 1100.f;
+	
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>SKmodel(TEXT("/Game/ModularRPGHeroesPolyart/Meshes/OneMeshCharacters/CommonerSK.CommonerSK"));
 	ConstructorHelpers::FObjectFinder<UAnimSequence>RunAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/MagicWandStance/Sprint_MagicWandAnim.Sprint_MagicWandAnim"));
 	ConstructorHelpers::FObjectFinder<UAnimSequence>IdleAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/MagicWandStance/Idle_MagicWandAnim.Idle_MagicWandAnim"));
+	ConstructorHelpers::FObjectFinder<UAnimSequence>JumpAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/NoWeaponStance/JumpAir_noWeaponAnim.JumpAir_noWeaponAnim"));
 	
+	JumpAnimation=JumpAnim.Object;
 	RunAnimation= RunAnim.Object;
 	IdleAnimation = IdleAnim.Object;
 	GetMesh()->SetSkeletalMesh(SKmodel.Object);
@@ -62,20 +67,27 @@ void ABunAssistant::UpdateAnimations()
 	static UAnimSequence* DesiredAnimation;
 	if(PlayerSpeedSqr>0.0f&&DesiredAnimation!=RunAnimation){
 		DesiredAnimation=RunAnimation;
-		GetMesh()->OverrideAnimationData(RunAnimation, true, true);
+		GetMesh()->SetAnimation(DesiredAnimation);
+		GetMesh()->PlayAnimation(DesiredAnimation, true);
 	}
 	else if(PlayerSpeedSqr==0.0f&&DesiredAnimation!=IdleAnimation){
 		DesiredAnimation=IdleAnimation;
-		GetMesh()->OverrideAnimationData(IdleAnimation, true, true);
+		GetMesh()->SetAnimation(DesiredAnimation);
+		GetMesh()->PlayAnimation(DesiredAnimation, true);
 		
+	}
+	else if(JumpCount > 0 && DesiredAnimation != JumpAnimation){
+	    DesiredAnimation=JumpAnimation;
+		GetMesh()->SetAnimation(DesiredAnimation);
+		GetMesh()->PlayAnimation(DesiredAnimation, true);
 	}
 	
 
 }
 void ABunAssistant::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ABunAssistant::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ABunAssistant::StopJump);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABunAssistant::MoveRight);
 
 	PlayerInputComponent->BindTouch(IE_Pressed, this, &ABunAssistant::TouchStarted);
@@ -90,13 +102,26 @@ void ABunAssistant::MoveRight(float Value)
 void ABunAssistant::TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
 	Jump();
-	GetMesh()->OverrideAnimationData(RunAnimation, true, true);
 }
+
+void ABunAssistant::Jump()
+{
+	JumpCount++;
+	Jump();
+}
+
+void ABunAssistant::StopJump()
+{
+	JumpCount--;
+	StopJumping();
+}
+
 void ABunAssistant::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	UpdateAnimations();
 }
+
 void ABunAssistant::TouchStopped(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
 	StopJumping();
