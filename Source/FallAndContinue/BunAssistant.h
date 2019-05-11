@@ -28,20 +28,26 @@ protected:
 	void TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location);
 
 	void TouchStopped(const ETouchIndex::Type FingerIndex, const FVector Location);
-	
-	void Jump();
-	
-	void StopJump();
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+	
+	virtual void Landed(const FHitResult& Hit)override;
 
 	void UpdateAnimations();
+	
+	void DoubleJump(); 
 	
 	class UAnimSequence* RunAnimation; 
 
 	class UAnimSequence* IdleAnimation;
 	
 	class UAnimSequence* JumpAnimation;
+		
+	class UAnimSequence* RunWoundedAnimation;
+		
+	class UAnimSequence* IdleWoundedAnimation;
+	
+	float HP;
 	
 public:
 	void BeginPlay();
@@ -54,6 +60,8 @@ public:
 	float JumpCount;
 	
 	float JumpHeight;
+	
+	bool fly;
 	
 	FORCEINLINE class UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }
 	
