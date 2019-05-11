@@ -37,16 +37,18 @@ protected:
 	
 	void DoubleJump(); 
 	
+	class UAnimSequence* RunWoundedAnimation;
+		
+	class UAnimSequence* IdleWoundedAnimation;
+	
 	class UAnimSequence* RunAnimation; 
 
 	class UAnimSequence* IdleAnimation;
 	
 	class UAnimSequence* JumpAnimation;
-		
-	class UAnimSequence* RunWoundedAnimation;
-		
-	class UAnimSequence* IdleWoundedAnimation;
 	
+	class UAnimSequence* DieAnimation;
+
 	float HP;
 	
 public:

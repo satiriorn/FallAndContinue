@@ -44,28 +44,27 @@ ABunAssistant::ABunAssistant()
 	JumpCount = 0;
 	JumpHeight = 1100.f;
 	
-	HP=105.0f;
-	
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>SKmodel(TEXT("/Game/ModularRPGHeroesPolyart/Meshes/OneMeshCharacters/CommonerSK.CommonerSK"));
 	ConstructorHelpers::FObjectFinder<UAnimSequence>RunAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/MagicWandStance/Sprint_MagicWandAnim.Sprint_MagicWandAnim"));
 	ConstructorHelpers::FObjectFinder<UAnimSequence>RunwoundedAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/MagicWandStance/Run_MagicWandAnim.Run_MagicWandAnim"));
 	ConstructorHelpers::FObjectFinder<UAnimSequence>IdleAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/MagicWandStance/Idle_MagicWandAnim.Idle_MagicWandAnim"));
 	ConstructorHelpers::FObjectFinder<UAnimSequence>JumpAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/NoWeaponStance/JumpAir_noWeaponAnim.JumpAir_noWeaponAnim"));
 	ConstructorHelpers::FObjectFinder<UAnimSequence>IdlewoundedAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/MagicWandStance/Dizzy_MagicWandAnim.Dizzy_MagicWandAnim"));
+	ConstructorHelpers::FObjectFinder<UAnimSequence>DieAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/NoWeaponStance/Die_noWeaponAnim.Die_noWeaponAnim"));
 	
-	JumpAnimation=JumpAnim.Object;
-	RunAnimation= RunAnim.Object;
-	RunWoundedAnimation=RunwoundedAnim.Object;
+	JumpAnimation =JumpAnim.Object;
+	RunAnimation = RunAnim.Object;
+	RunWoundedAnimation = RunwoundedAnim.Object;
 	IdleWoundedAnimation = IdlewoundedAnim.Object;
 	IdleAnimation = IdleAnim.Object;
-
+	DieAnimation = DieAnim.Object;
+	HP=100.0f;
 	GetMesh()->SetSkeletalMesh(SKmodel.Object);
 }
 
 void ABunAssistant::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 void ABunAssistant::UpdateAnimations()
@@ -73,19 +72,25 @@ void ABunAssistant::UpdateAnimations()
 	const FVector PlayerVelocity = GetVelocity();
 	const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
 	static UAnimSequence* DesiredAnimation;
+	//GetMesh()->OverrideAnimationData(DesiredAnimation, true, true);
 	
-	if(PlayerSpeedSqr>0.0f&&DesiredAnimation!=RunAnimation&&fly==false){
+	if(PlayerSpeedSqr>0.0f&&DesiredAnimation!=RunAnimation&&fly==false&&DesiredAnimation!=RunWoundedAnimation&&HP>0.0f){
 		DesiredAnimation =(HP>50.0f)?RunAnimation:RunWoundedAnimation;
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
 	}
-	else if(PlayerSpeedSqr==0.0f&&DesiredAnimation!=IdleAnimation){
+	else if(PlayerSpeedSqr==0.0f&&DesiredAnimation!=IdleAnimation&&DesiredAnimation!=IdleWoundedAnimation&&HP>0.0f){
 		DesiredAnimation = (HP>50.0f)?IdleAnimation:IdleWoundedAnimation;
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
 	}
-	else if(fly==true &&DesiredAnimation != JumpAnimation){
+	else if(fly==true &&DesiredAnimation != JumpAnimation&&HP>0.0f){
 		DesiredAnimation = JumpAnimation;
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
 	}
+	if(HP<=0.f&& DesiredAnimation!=DieAnimation){
+		DesiredAnimation=DieAnimation;
+		GetMesh()->PlayAnimation(DesiredAnimation, true);
+	}
+
 }
 
 
