@@ -58,10 +58,27 @@ ABunAssistant::ABunAssistant()
 	IdleWoundedAnimation = IdlewoundedAnim.Object;
 	IdleAnimation = IdleAnim.Object;
 	DieAnimation = DieAnim.Object;
-	HP=100.0f;
+	
+	HP=10.0f;
 	GetMesh()->SetSkeletalMesh(SKmodel.Object);
+	
+
 }
 
+void ABunAssistant::GetSword()
+{
+	
+	UClass* BPSword =StaticLoadClass(UObject::StaticClass(), nullptr, TEXT("/Game/Blueprints/Sword.Sword"));
+	const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("hand_rSocket");
+	FVector location = GetActorLocation();		
+	FRotator rotation = GetActorRotation();
+	AActor * Sword = GetWorld()->SpawnActor(BPSword, &location, &rotation);
+	socket->AttachActor(Sword, GetMesh());
+	//AWeapon m_cWeapon = GetWorld()->SpawnActor<AWeapon>(m_cUClassWeapon);
+	 //FName fnWeaponSocket = TEXT("hand_rSocket");
+	//ABunAssistant->AttachRootComponentToActor(this, fnWeaponSocket, EAttachLocation::SnapToTarget, true);
+	//FName fnWeaponSocket = weaponSocket->GetFName();
+}
 void ABunAssistant::BeginPlay()
 {
 	Super::BeginPlay();
@@ -98,6 +115,7 @@ void ABunAssistant::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 {
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ABunAssistant::DoubleJump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("GetSword", IE_Released, this, &ABunAssistant::GetSword);
 	
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABunAssistant::MoveRight);
 

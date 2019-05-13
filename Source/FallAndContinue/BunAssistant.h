@@ -20,6 +20,7 @@ class ABunAssistant : public ACharacter
 		class USpringArmComponent* CameraBoom;
 		
 	virtual void Tick(float DeltaSeconds) override;
+     
 	
 protected:
 
@@ -36,6 +37,8 @@ protected:
 	void UpdateAnimations();
 	
 	void DoubleJump(); 
+	
+	void GetSword();
 	
 	class UAnimSequence* RunWoundedAnimation;
 		
