@@ -62,7 +62,7 @@ ABunAssistant::ABunAssistant()
 	IdleAnimation = IdleAnim.Object;
 	DieAnimation = DieAnim.Object;
 	
-	HP=10.0f;
+	HP=112.0f;
 	GetMesh()->SetSkeletalMesh(SKmodel.Object);
 
 }
@@ -70,16 +70,15 @@ ABunAssistant::ABunAssistant()
 void ABunAssistant::GetSword()
 {
 	//Super::PostInitializeComponents();
-	UClass* BPSword =StaticLoadClass(UObject::StaticClass(), nullptr, TEXT("/Game/Blueprints/Sword.Sword"));
-	const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("hand_rSocket");
-	FVector location = GetActorLocation();		
-	FRotator rotation = GetActorRotation();
-	Sword = GetWorld()->SpawnActor(BPSword, &location, &rotation);
-	socket->AttachActor(Sword, GetMesh());
-	//AWeapon m_cWeapon = GetWorld()->SpawnActor<AWeapon>(m_cUClassWeapon);
-	 //FName fnWeaponSocket = TEXT("hand_rSocket");
-	//ABunAssistant->AttachRootComponentToActor(this, fnWeaponSocket, EAttachLocation::SnapToTarget, true);
-	//FName fnWeaponSocket = weaponSocket->GetFName();
+	FName fnWeaponSocket = TEXT("hand_rSocket");
+	//UClass* BPMeleeWeapon =StaticLoadClass(UObject::StaticClass(), nullptr, TEXT("/Game/Blueprints/MeleeWeapon.MeleeWeapon"));
+	MeleeWeapon = GetWorld()->SpawnActor<AMeleeWeapon>(BPMeleeWeapon, FVector(), FRotator());
+	//const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("hand_rSocket");
+	//socket->AttachActor(MeleeWeapon, GetMesh());
+	MeleeWeapon->Mesh->SetSimulatePhysics(false);
+	MeleeWeapon->Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	MeleeWeapon->Mesh->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), fnWeaponSocket);
+
 }
 void ABunAssistant::BeginPlay()
 {

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "MeleeWeapon.h"
 #include "BunAssistant.generated.h"
 
 
@@ -56,15 +57,16 @@ protected:
 
 	float HP;
 	
-	AActor * Sword;
-	
+	AMeleeWeapon* MeleeWeapon;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MonsterProperties)
+		UClass* BPMeleeWeapon;
 public:
 	void BeginPlay();
 	
 	ABunAssistant();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Varibl;
+	bool Varibl;
 	
 	float JumpCount;
 	

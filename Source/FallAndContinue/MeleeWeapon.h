@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "MeleeWeapon.generated.h"
 #include "Components/BoxComponent.h"
+#include "MeleeWeapon.generated.h"
+
 
 UCLASS()
 class FALLANDCONTINUE_API AMeleeWeapon : public AActor
@@ -13,7 +14,7 @@ class FALLANDCONTINUE_API AMeleeWeapon : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
+
 	AMeleeWeapon(const FObjectInitializer& ObjectInitializer);
 
 	// The amount of damage attacks by this weapon do 
@@ -41,24 +42,24 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category =
 		MeleeWeapon)
 		UStaticMeshComponent* Mesh;
-
+/*
 	UFUNCTION(BlueprintNativeEvent, Category = Collision)
 		void Prox(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 			int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	// You shouldn't need this unless you get a compiler error that it can't find this function.
 	virtual int Prox_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);*/
 
 	void Swing();
 	void Rest();
 
 protected:
-	// Called when the game starts or when spawned
+
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
+	
 	virtual void Tick(float DeltaTime) override;
 
 };
