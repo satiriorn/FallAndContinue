@@ -33,6 +33,8 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 	
 	virtual void Landed(const FHitResult& Hit)override;
+	
+	//virtual void PostInitializeComponents() override;
 
 	void UpdateAnimations();
 	
@@ -53,6 +55,8 @@ protected:
 	class UAnimSequence* DieAnimation;
 
 	float HP;
+	
+	AActor * Sword;
 	
 public:
 	void BeginPlay();

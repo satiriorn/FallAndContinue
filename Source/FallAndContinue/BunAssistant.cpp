@@ -8,6 +8,9 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
+#include "Engine/SkeletalMeshSocket.h"
+
+class USkeletalMeshSocket;
 
 ABunAssistant::ABunAssistant()
 {
@@ -61,18 +64,17 @@ ABunAssistant::ABunAssistant()
 	
 	HP=10.0f;
 	GetMesh()->SetSkeletalMesh(SKmodel.Object);
-	
 
 }
 
 void ABunAssistant::GetSword()
 {
-	
+	//Super::PostInitializeComponents();
 	UClass* BPSword =StaticLoadClass(UObject::StaticClass(), nullptr, TEXT("/Game/Blueprints/Sword.Sword"));
 	const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("hand_rSocket");
 	FVector location = GetActorLocation();		
 	FRotator rotation = GetActorRotation();
-	AActor * Sword = GetWorld()->SpawnActor(BPSword, &location, &rotation);
+	Sword = GetWorld()->SpawnActor(BPSword, &location, &rotation);
 	socket->AttachActor(Sword, GetMesh());
 	//AWeapon m_cWeapon = GetWorld()->SpawnActor<AWeapon>(m_cUClassWeapon);
 	 //FName fnWeaponSocket = TEXT("hand_rSocket");
@@ -89,7 +91,6 @@ void ABunAssistant::UpdateAnimations()
 	const FVector PlayerVelocity = GetVelocity();
 	const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
 	static UAnimSequence* DesiredAnimation;
-	//GetMesh()->OverrideAnimationData(DesiredAnimation, true, true);
 	
 	if(PlayerSpeedSqr>0.0f&&DesiredAnimation!=RunAnimation&&fly==false&&DesiredAnimation!=RunWoundedAnimation&&HP>0.0f){
 		DesiredAnimation =(HP>50.0f)?RunAnimation:RunWoundedAnimation;
