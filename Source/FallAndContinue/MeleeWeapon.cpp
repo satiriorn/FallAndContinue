@@ -3,6 +3,8 @@
 
 
 #include "MeleeWeapon.h"
+#include "DrawDebugHelpers.h"
+#include "ConstructorHelpers.h"
 
 // Sets default values
 AMeleeWeapon::AMeleeWeapon(const FObjectInitializer& ObjectInitializer)
@@ -10,23 +12,34 @@ AMeleeWeapon::AMeleeWeapon(const FObjectInitializer& ObjectInitializer)
 	AttackDamage = 1;
 	Swinging = false;
 	//WeaponHolder = NULL;
-
-	Mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this,
-		TEXT("Mesh"));
+	ConstructorHelpers::FObjectFinder<UStaticMesh>mesh(TEXT("/Game/ModularRPGHeroesPolyart/Meshes/Weapons/Sword01SM.Sword01SM"));
+	Mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this,TEXT("Mesh"));
+	Mesh->SetStaticMesh(mesh.Object);
 	RootComponent = Mesh;
 
 	ProxBox = ObjectInitializer.CreateDefaultSubobject<UBoxComponent>(this,
 		TEXT("ProxBox"));
-	//ProxBox->OnComponentBeginOverlap.AddDynamic(this,&AMeleeWeapon::Prox);
+
+	SpaceEnable= ObjectInitializer.CreateDefaultSubobject<USphereComponent>
+		(this, TEXT("SpaceEnable"));
+	SpaceEnable->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
 	ProxBox->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+	
+	ProxBox->OnComponentBeginOverlap.AddDynamic(this,&AMeleeWeapon::OnOverlapBegin);
+
 
 }
+
+void AMeleeWeapon::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+ {
+
+	 GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Overlap Begin"));
+ }
 
 // Called when the game starts or when spawned
 void AMeleeWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame

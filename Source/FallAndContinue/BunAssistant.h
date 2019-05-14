@@ -54,12 +54,15 @@ protected:
 	class UAnimSequence* JumpAnimation;
 	
 	class UAnimSequence* DieAnimation;
+	
+	class UAnimSequence* WeaponSelection;
 
 	float HP;
 	
 	AMeleeWeapon* MeleeWeapon;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MonsterProperties)
-		UClass* BPMeleeWeapon;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MeleeWeapon)
+		UClass* ObjMeleeWeapon;
+		
 public:
 	void BeginPlay();
 	

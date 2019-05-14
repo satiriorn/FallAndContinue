@@ -9,6 +9,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
 #include "Engine/SkeletalMeshSocket.h"
+#include "DrawDebugHelpers.h"
+
+using namespace std;
 
 class USkeletalMeshSocket;
 
@@ -54,6 +57,7 @@ ABunAssistant::ABunAssistant()
 	ConstructorHelpers::FObjectFinder<UAnimSequence>JumpAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/NoWeaponStance/JumpAir_noWeaponAnim.JumpAir_noWeaponAnim"));
 	ConstructorHelpers::FObjectFinder<UAnimSequence>IdlewoundedAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/MagicWandStance/Dizzy_MagicWandAnim.Dizzy_MagicWandAnim"));
 	ConstructorHelpers::FObjectFinder<UAnimSequence>DieAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/NoWeaponStance/Die_noWeaponAnim.Die_noWeaponAnim"));
+	ConstructorHelpers::FObjectFinder<UAnimSequence>SelectionWeaponAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/NoWeaponStance/PickUp_noWeaponAnim.PickUp_noWeaponAnim"));
 	
 	JumpAnimation =JumpAnim.Object;
 	RunAnimation = RunAnim.Object;
@@ -61,6 +65,7 @@ ABunAssistant::ABunAssistant()
 	IdleWoundedAnimation = IdlewoundedAnim.Object;
 	IdleAnimation = IdleAnim.Object;
 	DieAnimation = DieAnim.Object;
+	WeaponSelection = SelectionWeaponAnim.Object;
 	
 	HP=112.0f;
 	GetMesh()->SetSkeletalMesh(SKmodel.Object);
@@ -69,16 +74,13 @@ ABunAssistant::ABunAssistant()
 
 void ABunAssistant::GetSword()
 {
-	//Super::PostInitializeComponents();
-	FName fnWeaponSocket = TEXT("hand_rSocket");
-	//UClass* BPMeleeWeapon =StaticLoadClass(UObject::StaticClass(), nullptr, TEXT("/Game/Blueprints/MeleeWeapon.MeleeWeapon"));
-	MeleeWeapon = GetWorld()->SpawnActor<AMeleeWeapon>(BPMeleeWeapon, FVector(), FRotator());
-	//const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("hand_rSocket");
-	//socket->AttachActor(MeleeWeapon, GetMesh());
-	MeleeWeapon->Mesh->SetSimulatePhysics(false);
-	MeleeWeapon->Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
-	MeleeWeapon->Mesh->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), fnWeaponSocket);
-
+	FName fnWeaponSocket = TEXT("RightWeaponShield");
+	MeleeWeapon = GetWorld()->SpawnActor<AMeleeWeapon>(ObjMeleeWeapon, FVector(), FRotator());
+	if(MeleeWeapon){
+		MeleeWeapon->Mesh->SetSimulatePhysics(false);
+		MeleeWeapon->Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+		MeleeWeapon->Mesh->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), fnWeaponSocket);
+		}
 }
 void ABunAssistant::BeginPlay()
 {
