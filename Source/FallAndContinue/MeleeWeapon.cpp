@@ -5,7 +5,6 @@
 #include "MeleeWeapon.h"
 #include "DrawDebugHelpers.h"
 #include "ConstructorHelpers.h"
-#include "BunAssistant.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -24,31 +23,40 @@ AMeleeWeapon::AMeleeWeapon(const FObjectInitializer& ObjectInitializer)
 	SpaceEnable->InitSphereRadius(220.0f);
 	SpaceEnable->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
 	SpaceEnable->OnComponentBeginOverlap.AddDynamic(this,&AMeleeWeapon::OnOverlapBegin);
+	SpaceEnable->OnComponentEndOverlap.AddDynamic(this, &AMeleeWeapon::OnOverlapEnd); 
 }
 
 void AMeleeWeapon::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
  {
-	 ABunAssistant* a = Cast<ABunAssistant>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-	 a->EnableZoneWeapon=true;
-	 GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Overlap Begin"));
+	 if((OtherActor!=nullptr)&&(OtherActor!=this)&&(OtherComp!=nullptr)){
+		 	 ABunAssistant* Assistant = Cast<ABunAssistant>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+			 Assistant->EnableZoneWeapon=true;
+			 GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Overlap Begin"));
+	 }
+
  }
  
  void AMeleeWeapon::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	a->EnableZoneWeapon=false;
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ENd"));
+	ABunAssistant* Assistant = Cast<ABunAssistant>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	Assistant->EnableZoneWeapon=false;
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("End"));
 }
 
 void AMeleeWeapon::BeginPlay()
 {
 	Super::BeginPlay();
+
 }
 
 // Called every frame
 void AMeleeWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	ABunAssistant* Assistant = Cast<ABunAssistant>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	sss=Assistant->GetSwords;
+	if(sss)
+		Destroy();
 }
 /*
 int AMeleeWeapon::Prox_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,

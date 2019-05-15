@@ -26,6 +26,8 @@ class ABunAssistant : public ACharacter
 protected:
 
 	void MoveRight(float Val);
+	
+	void SetSword();
 
 	void TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location);
 
@@ -59,8 +61,6 @@ protected:
 
 	float HP;
 	
-	AMeleeWeapon* MeleeWeapon;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MeleeWeapon)
 		UClass* ObjMeleeWeapon;
 		
@@ -79,6 +79,11 @@ public:
 	bool fly;
 	
 	bool EnableZoneWeapon;
+	
+	float TimeGetSwords;
+	
+	bool GetSwords;
+	
 	FORCEINLINE class UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }
 	
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

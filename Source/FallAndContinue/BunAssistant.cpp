@@ -70,7 +70,7 @@ ABunAssistant::ABunAssistant()
 	
 	HP=112.0f;
 	GetMesh()->SetSkeletalMesh(SKmodel.Object);
-
+	TimeGetSwords = 0.0f;
 	EnableZoneWeapon = false;
 }
 
@@ -79,14 +79,21 @@ void ABunAssistant::GetSword()
 	FName fnWeaponSocket = TEXT("RightWeaponShield");
 	if(EnableZoneWeapon)
 	{
+		GetSwords = true;
+		AMeleeWeapon* MeleeWeapon;
 		MeleeWeapon = GetWorld()->SpawnActor<AMeleeWeapon>(ObjMeleeWeapon, FVector(), FRotator());
 		if(MeleeWeapon){
 			MeleeWeapon->Mesh->SetSimulatePhysics(false);
 			MeleeWeapon->Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 			MeleeWeapon->Mesh->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), fnWeaponSocket);
-			}
+		}
 	}
 }
+
+void ABunAssistant::SetSword(){
+	GetSwords=false;
+	}
+
 void ABunAssistant::BeginPlay()
 {
 	Super::BeginPlay();
@@ -98,23 +105,28 @@ void ABunAssistant::UpdateAnimations()
 	const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
 	static UAnimSequence* DesiredAnimation;
 	
-	if(PlayerSpeedSqr>0.0f&&DesiredAnimation!=RunAnimation&&fly==false&&DesiredAnimation!=RunWoundedAnimation&&HP>0.0f){
+	if(PlayerSpeedSqr>0.0f && DesiredAnimation!= RunAnimation&& fly==false && DesiredAnimation!= RunWoundedAnimation&& HP>0.0f && TimeGetSwords<=0.0f && GetSwords!=true){
 		DesiredAnimation =(HP>50.0f)?RunAnimation:RunWoundedAnimation;
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
 	}
-	else if(PlayerSpeedSqr==0.0f&&DesiredAnimation!=IdleAnimation&&DesiredAnimation!=IdleWoundedAnimation&&HP>0.0f){
+
+	else if(PlayerSpeedSqr==0.0f && DesiredAnimation != IdleAnimation && DesiredAnimation != IdleWoundedAnimation && HP>0.0f && TimeGetSwords <= 0.0f&& GetSwords!=true){
 		DesiredAnimation = (HP>50.0f)?IdleAnimation:IdleWoundedAnimation;
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
 	}
-	else if(fly==true &&DesiredAnimation != JumpAnimation&&HP>0.0f){
+	else if( fly==true && DesiredAnimation != JumpAnimation&&HP>0.0f&& GetSwords!=true){
 		DesiredAnimation = JumpAnimation;
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
 	}
-	if(HP<=0.f&& DesiredAnimation!=DieAnimation){
+	else if(DesiredAnimation!=WeaponSelection && TimeGetSwords<=0.0f && GetSwords!=false){
+		DesiredAnimation=WeaponSelection;
+		GetMesh()->PlayAnimation(DesiredAnimation, true);
+		TimeGetSwords = 1.4f;
+	}
+	if(HP<=0.f && DesiredAnimation!=DieAnimation){
 		DesiredAnimation=DieAnimation;
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
 	}
-
 }
 
 
@@ -122,7 +134,8 @@ void ABunAssistant::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 {
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ABunAssistant::DoubleJump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-	PlayerInputComponent->BindAction("GetSword", IE_Released, this, &ABunAssistant::GetSword);
+	PlayerInputComponent->BindAction("GetSword", IE_Pressed, this, &ABunAssistant::GetSword);
+	PlayerInputComponent->BindAction("GetSword", IE_Released, this, &ABunAssistant::SetSword);
 	
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABunAssistant::MoveRight);
 
@@ -165,6 +178,9 @@ void ABunAssistant::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	UpdateAnimations();
+	if(TimeGetSwords>0.0f)
+		TimeGetSwords-=DeltaSeconds;
+	 //GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString(TimeGetSwords));
 }
 
 void ABunAssistant::TouchStopped(const ETouchIndex::Type FingerIndex, const FVector Location)

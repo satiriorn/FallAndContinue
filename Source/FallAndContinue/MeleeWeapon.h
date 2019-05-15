@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
+#include "BunAssistant.h"
 #include "MeleeWeapon.generated.h"
 
 
@@ -52,13 +53,12 @@ public:
 
 	void Swing();
 	void Rest();
-	
-	ABunAssistant*  
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool sss;
 protected:
 
 	virtual void BeginPlay() override;
-
+	
 public:	
 	
 	virtual void Tick(float DeltaTime) override;
