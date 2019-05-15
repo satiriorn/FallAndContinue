@@ -45,6 +45,10 @@ protected:
 	
 	void GetSword();
 	
+	void MeleeAttack();
+	
+	void StopMeleeAttack();
+	
 	class UAnimSequence* RunWoundedAnimation;
 		
 	class UAnimSequence* IdleWoundedAnimation;
@@ -58,6 +62,8 @@ protected:
 	class UAnimSequence* DieAnimation;
 	
 	class UAnimSequence* WeaponSelection;
+	
+	class UAnimSequence* TopHit;
 
 	float HP;
 	
@@ -82,8 +88,11 @@ public:
 	
 	float TimeGetSwords;
 	
+	float TimeAnimationAttack;
+	
 	bool GetSwords;
 	
+	bool Attack;
 	FORCEINLINE class UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }
 	
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

@@ -38,9 +38,11 @@ void AMeleeWeapon::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
  
  void AMeleeWeapon::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	ABunAssistant* Assistant = Cast<ABunAssistant>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-	Assistant->EnableZoneWeapon=false;
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("End"));
+	if((OtherActor!=nullptr)&&(OtherActor!=this)&&(OtherComp!=nullptr)){
+		ABunAssistant* Assistant = Cast<ABunAssistant>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+		Assistant->EnableZoneWeapon=false;
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("End"));
+	}
 }
 
 void AMeleeWeapon::BeginPlay()
