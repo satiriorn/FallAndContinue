@@ -24,13 +24,8 @@ public:
 
 	TArray<AActor*> ThingsHit;
 
-	// prevents damage from occurring in frames where 
-	// the sword is not swinging 
 	bool Swinging;
 
-	// "Stop hitting yourself" - used to check if the  
-	// actor holding the weapon is hitting himself 
-	//AMonster *WeaponHolder;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = SpaceEnable)
 		USphereComponent* SpaceEnable;
 
@@ -43,7 +38,10 @@ public:
 		
 	UFUNCTION()
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-/*
+
+	UFUNCTION()
+		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+		/*
 	UFUNCTION(BlueprintNativeEvent, Category = Collision)
 		void Prox(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 			int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -54,7 +52,9 @@ public:
 
 	void Swing();
 	void Rest();
-
+	
+	ABunAssistant*  
+	
 protected:
 
 	virtual void BeginPlay() override;
@@ -62,5 +62,6 @@ protected:
 public:	
 	
 	virtual void Tick(float DeltaTime) override;
+	
 
 };

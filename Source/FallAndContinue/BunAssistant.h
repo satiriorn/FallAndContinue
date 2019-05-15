@@ -60,6 +60,7 @@ protected:
 	float HP;
 	
 	AMeleeWeapon* MeleeWeapon;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MeleeWeapon)
 		UClass* ObjMeleeWeapon;
 		
@@ -77,6 +78,7 @@ public:
 	
 	bool fly;
 	
+	bool EnableZoneWeapon;
 	FORCEINLINE class UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }
 	
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

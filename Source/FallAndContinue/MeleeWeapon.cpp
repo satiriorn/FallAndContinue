@@ -5,38 +5,40 @@
 #include "MeleeWeapon.h"
 #include "DrawDebugHelpers.h"
 #include "ConstructorHelpers.h"
+#include "BunAssistant.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AMeleeWeapon::AMeleeWeapon(const FObjectInitializer& ObjectInitializer)
 {
 	AttackDamage = 1;
 	Swinging = false;
-	//WeaponHolder = NULL;
+
 	ConstructorHelpers::FObjectFinder<UStaticMesh>mesh(TEXT("/Game/ModularRPGHeroesPolyart/Meshes/Weapons/Sword01SM.Sword01SM"));
 	Mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this,TEXT("Mesh"));
 	Mesh->SetStaticMesh(mesh.Object);
-	RootComponent = Mesh;
-
-	ProxBox = ObjectInitializer.CreateDefaultSubobject<UBoxComponent>(this,
-		TEXT("ProxBox"));
-
-	SpaceEnable= ObjectInitializer.CreateDefaultSubobject<USphereComponent>
-		(this, TEXT("SpaceEnable"));
-	SpaceEnable->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
-	ProxBox->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
 	
-	ProxBox->OnComponentBeginOverlap.AddDynamic(this,&AMeleeWeapon::OnOverlapBegin);
-
-
+	RootComponent = Mesh;
+	
+	SpaceEnable= ObjectInitializer.CreateDefaultSubobject<USphereComponent>(this, TEXT("SpaceEnable"));
+	SpaceEnable->InitSphereRadius(220.0f);
+	SpaceEnable->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+	SpaceEnable->OnComponentBeginOverlap.AddDynamic(this,&AMeleeWeapon::OnOverlapBegin);
 }
 
 void AMeleeWeapon::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
  {
-
+	 ABunAssistant* a = Cast<ABunAssistant>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	 a->EnableZoneWeapon=true;
 	 GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Overlap Begin"));
  }
+ 
+ void AMeleeWeapon::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	a->EnableZoneWeapon=false;
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ENd"));
+}
 
-// Called when the game starts or when spawned
 void AMeleeWeapon::BeginPlay()
 {
 	Super::BeginPlay();

@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
 #include "Engine/SkeletalMeshSocket.h"
+#include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
 
 using namespace std;
@@ -70,17 +71,21 @@ ABunAssistant::ABunAssistant()
 	HP=112.0f;
 	GetMesh()->SetSkeletalMesh(SKmodel.Object);
 
+	EnableZoneWeapon = false;
 }
 
 void ABunAssistant::GetSword()
 {
 	FName fnWeaponSocket = TEXT("RightWeaponShield");
-	MeleeWeapon = GetWorld()->SpawnActor<AMeleeWeapon>(ObjMeleeWeapon, FVector(), FRotator());
-	if(MeleeWeapon){
-		MeleeWeapon->Mesh->SetSimulatePhysics(false);
-		MeleeWeapon->Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
-		MeleeWeapon->Mesh->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), fnWeaponSocket);
-		}
+	if(EnableZoneWeapon)
+	{
+		MeleeWeapon = GetWorld()->SpawnActor<AMeleeWeapon>(ObjMeleeWeapon, FVector(), FRotator());
+		if(MeleeWeapon){
+			MeleeWeapon->Mesh->SetSimulatePhysics(false);
+			MeleeWeapon->Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+			MeleeWeapon->Mesh->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), fnWeaponSocket);
+			}
+	}
 }
 void ABunAssistant::BeginPlay()
 {
