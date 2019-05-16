@@ -49,6 +49,8 @@ protected:
 	
 	void StopMeleeAttack();
 	
+	void AnimationState();
+	
 	class UAnimSequence* RunWoundedAnimation;
 		
 	class UAnimSequence* IdleWoundedAnimation;
@@ -64,13 +66,19 @@ protected:
 	class UAnimSequence* WeaponSelection;
 	
 	class UAnimSequence* TopHit;
-
+		
+	class UAnimSequence* HitBelow;
+	
 	float HP;
+	
+
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MeleeWeapon)
 		UClass* ObjMeleeWeapon;
 		
 public:
+	FTimerHandle InOutHandle;
+	
 	void BeginPlay();
 	
 	ABunAssistant();
@@ -80,9 +88,13 @@ public:
 	
 	float JumpCount;
 	
+	float DeltaTime;
+	
 	float JumpHeight;
 	
 	bool fly;
+	
+	bool AttackBelow;
 	
 	bool EnableZoneWeapon;
 	
