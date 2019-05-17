@@ -111,7 +111,7 @@ void ABunAssistant::MeleeAttack(){
 			Attack=true;
 			AttackBelow=true;
 	}
-		Varibl=true;
+		//Varibl=true;
 }
 	
 void ABunAssistant::StopMeleeAttack(){Attack=false;AttackBelow=false;}
