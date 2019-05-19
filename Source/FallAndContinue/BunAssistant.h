@@ -51,6 +51,10 @@ protected:
 	
 	void AnimationState();
 	
+	void StartSlide();
+	
+	void StopSlide();
+	
 	class UAnimSequence* RunWoundedAnimation;
 		
 	class UAnimSequence* IdleWoundedAnimation;
@@ -73,6 +77,8 @@ protected:
 	
 	class UAnimSequence* SlideAnimation;
 	
+	class UAnimSequence* TopHit;
+	
 	float HP;
 	
 
@@ -81,6 +87,8 @@ protected:
 		UClass* ObjMeleeWeapon;
 		
 public:
+
+	float TimeAnimationSlide;
 	FTimerHandle InOutHandle;
 	
 	void BeginPlay();
@@ -102,7 +110,11 @@ public:
 	
 	bool EnableZoneWeapon;
 	
+	bool StateSlide;
+	
 	bool GetSwordAnimation;
+	
+	bool TopHitState;
 	
 	float TimeGetSwords;
 	

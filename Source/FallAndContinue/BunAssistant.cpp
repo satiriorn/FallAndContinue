@@ -44,7 +44,7 @@ ABunAssistant::ABunAssistant()
 	GetCharacterMovement()->GravityScale = 2.f;
 	GetCharacterMovement()->AirControl = 0.80f;
 	GetCharacterMovement()->JumpZVelocity = 1000.f;
-	GetCharacterMovement()->GroundFriction = 3.f;
+	GetCharacterMovement()->GroundFriction = 1.0f;
 	GetCharacterMovement()->MaxWalkSpeed = 600.f;
 	GetCharacterMovement()->MaxFlySpeed = 600.f;
 	
@@ -63,6 +63,7 @@ ABunAssistant::ABunAssistant()
 	ConstructorHelpers::FObjectFinder<UAnimSequence>Belowhit(TEXT("/Game/ModularRPGHeroesPolyart/Animations/SwordAndShieldStance/NormalAttack01_SwordShieldAnim.NormalAttack01_SwordShieldAnim"));
 	ConstructorHelpers::FObjectFinder<UAnimSequence>NormalAttacks(TEXT("/Game/ModularRPGHeroesPolyart/Animations/SwordAndShieldStance/NormalAttack02_SwordShieldAnim.NormalAttack02_SwordShieldAnim"));
 	ConstructorHelpers::FObjectFinder<UAnimSequence>Slide(TEXT("/Game/ModularRPGHeroesPolyart/Animations/SwordAndShieldStance/Slide_SwordShieldAnim.Slide_SwordShieldAnim"));
+	ConstructorHelpers::FObjectFinder<UAnimSequence>TOPHIT(TEXT("/Game/ModularRPGHeroesPolyart/Animations/DoubleSwordStance/Combo03_DoubleSwordAnim.Combo03_DoubleSwordAnim"));
 	
 	JumpAnimation =JumpAnim.Object;
 	RunAnimation = RunAnim.Object;
@@ -74,19 +75,30 @@ ABunAssistant::ABunAssistant()
 	JumpAttack = Tophit.Object; 
 	LowAttack = Belowhit.Object;
 	NormalAttack = NormalAttacks.Object;
-	SlideAnimation = Slide.ObjMeleeWeapon;
+	SlideAnimation = Slide.Object;
+	TopHit = TOPHIT.Object;
 	Varibl=false;
 	
-	HP=112.0f;
+	HP=1.0f;
 	GetMesh()->SetSkeletalMesh(SKmodel.Object);
 	TimeGetSwords = 0.0f;	
 	TimeAnimationAttack = 0.0f;
+	TimeAnimationSlide = 0.0f;
 	EnableZoneWeapon = false;
-	
 }
 
 	
-
+void ABunAssistant::StartSlide(){
+	const FVector PlayerVelocity = GetVelocity();
+	const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
+	if (PlayerSpeedSqr>500.0f){
+		StateSlide = true;
+		GetCharacterMovement()->GroundFriction = 0.1f;
+	}
+}
+void ABunAssistant::StopSlide(){
+	StateSlide = false;
+}
 void ABunAssistant::GetSword()
 {	
 	GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::Yellow, "monster: no bullet actor could be spawned. is the bullet overlapping something ? " ); 
@@ -116,16 +128,23 @@ void ABunAssistant::MeleeAttack(){
 	if(GetWorld()->GetFirstPlayerController()->IsInputKeyDown(EKeys::NumPadTwo)){
 			AttackBelow=true;
 	}	
-	if(GetWorld()->GetFirstPlayerController()->IsInputKeyDown(EKeys::NumPadSix)&&GetWorld()->GetFirstPlayerController()->IsInputKeyDown(EKeys::NumPadFour){
+	if(GetWorld()->GetFirstPlayerController()->IsInputKeyDown(EKeys::NumPadSix)&&GetWorld()->GetFirstPlayerController()->IsInputKeyDown(EKeys::NumPadFour))
+	{
 			AttackNormal=true;
 	}	
+	if(GetWorld()->GetFirstPlayerController()->IsInputKeyDown(EKeys::NumPadOne)&&GetWorld()->GetFirstPlayerController()->IsInputKeyDown(EKeys::NumPadThree))
+	{
+			TopHitState=true;
+	}	
+
 }
 	
-void ABunAssistant::StopMeleeAttack(){Attack=false;AttackBelow=false;}
+void ABunAssistant::StopMeleeAttack(){Attack=false;AttackBelow=false;AttackNormal=false;TopHitState=false;}
 
 void ABunAssistant::BeginPlay()
 {
 	Super::BeginPlay();
+	GetMesh()->PlayAnimation(IdleAnimation, true);
 }
 
 void ABunAssistant::UpdateAnimations()
@@ -135,17 +154,17 @@ void ABunAssistant::UpdateAnimations()
 	static UAnimSequence* DesiredAnimation;
 	
 	if(PlayerSpeedSqr>0.0f && DesiredAnimation!= RunAnimation&& fly==false && DesiredAnimation!= RunWoundedAnimation&& HP>0.0f && TimeGetSwords<=0.0f && GetSwordAnimation !=true &&
-	TimeAnimationAttack <=0.0f&&Attack==false&& AttackBelow==false){
+	TimeAnimationAttack <=0.0f&&Attack==false&& StateSlide!=true&&TimeAnimationSlide<=0.0f){
 		DesiredAnimation =(HP>50.0f)?RunAnimation:RunWoundedAnimation;
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
 	}
 
 	else if(PlayerSpeedSqr==0.0f && DesiredAnimation != IdleAnimation && DesiredAnimation != IdleWoundedAnimation && HP>0.0f && TimeGetSwords <= 0.0f&& GetSwordAnimation !=true&&
-	TimeAnimationAttack <=0.0f&&AttackBelow==false){
+	TimeAnimationAttack <=0.0f&&AttackBelow==false&&TimeAnimationSlide<=0.0f){
 		DesiredAnimation = (HP>50.0f)?IdleAnimation:IdleWoundedAnimation;
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
 	}
-	else if(DesiredAnimation!=WeaponSelection && TimeGetSwords<=0.0f && GetSwordAnimation !=false){
+	else if(DesiredAnimation!=WeaponSelection && TimeGetSwords<=0.0f && GetSwordAnimation !=false&&TimeAnimationSlide<=0.0f){
 		DesiredAnimation=WeaponSelection;
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
 		TimeGetSwords = 1.4f;
@@ -159,15 +178,25 @@ void ABunAssistant::UpdateAnimations()
 		DesiredAnimation = JumpAnimation;
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
 	}
-	else if(fly==false && DesiredAnimation != LowAttack && HP>0.0f && GetSwordAnimation !=true && AttackBelow==true && TimeAnimationAttack <= 0.0f ){
+	else if(fly==false && DesiredAnimation != LowAttack && HP>0.0f && GetSwordAnimation !=true && AttackBelow==true && TimeAnimationAttack <= 0.0f &&TimeAnimationSlide<=0.0f){
 		DesiredAnimation = LowAttack;
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
 		TimeAnimationAttack = 0.7f;
 	}
-	else if(fly==false && DesiredAnimation != NormalAttack && HP>0.0f && GetSwordAnimation !=true && AttackNormal==true && TimeAnimationAttack <= 0.0f ){
+	else if(fly==false && DesiredAnimation != NormalAttack && HP>0.0f && GetSwordAnimation !=true && AttackNormal==true && TimeAnimationAttack <= 0.0f &&TimeAnimationSlide<=0.0f){
 		DesiredAnimation = NormalAttack;
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
-		TimeAnimationAttack = 0.7f;
+		TimeAnimationAttack = 1.0f;
+	}
+	else if(fly==false && DesiredAnimation != TopHit && HP>0.0f && GetSwordAnimation !=true && TopHitState==true && TimeAnimationAttack <= 0.0f &&TimeAnimationSlide<=0.0f){
+		DesiredAnimation = TopHit;
+		GetMesh()->PlayAnimation(DesiredAnimation, true);
+		TimeAnimationAttack = 1.0f;
+	}
+	else if(fly==false && DesiredAnimation != SlideAnimation && HP>0.0f && GetSwordAnimation !=true && StateSlide==true&&TimeAnimationSlide<=0.0f){
+		DesiredAnimation = SlideAnimation;
+		GetMesh()->PlayAnimation(DesiredAnimation, true);
+		TimeAnimationSlide = 0.7f;
 	}
 	if(HP<=0.f && DesiredAnimation!=DieAnimation ){
 		DesiredAnimation=DieAnimation;
@@ -184,6 +213,9 @@ void ABunAssistant::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction("GetSword", IE_Released, this, &ABunAssistant::SetSword);
 	PlayerInputComponent->BindAction("MeleeAttack", IE_Pressed, this, &ABunAssistant::MeleeAttack);
 	PlayerInputComponent->BindAction("MeleeAttack", IE_Released, this, &ABunAssistant::StopMeleeAttack);
+	PlayerInputComponent->BindAction("Slide", IE_Pressed, this, &ABunAssistant::StartSlide);
+	PlayerInputComponent->BindAction("Slide", IE_Released, this, &ABunAssistant::StopSlide);
+	
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABunAssistant::MoveRight);
 
 	PlayerInputComponent->BindTouch(IE_Pressed, this, &ABunAssistant::TouchStarted);
@@ -230,6 +262,8 @@ void ABunAssistant::Tick(float DeltaSeconds)
 		TimeGetSwords-=DeltaSeconds;
 	if(TimeAnimationAttack>0.0f)
 		TimeAnimationAttack-=DeltaSeconds;
+	if(TimeAnimationSlide>0.0f)
+		TimeAnimationSlide-=DeltaSeconds;
 	 //GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString(TimeGetSwords));
 }
 
