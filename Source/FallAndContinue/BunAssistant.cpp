@@ -60,7 +60,9 @@ ABunAssistant::ABunAssistant()
 	ConstructorHelpers::FObjectFinder<UAnimSequence>DieAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/NoWeaponStance/Die_noWeaponAnim.Die_noWeaponAnim"));
 	ConstructorHelpers::FObjectFinder<UAnimSequence>SelectionWeaponAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/NoWeaponStance/PickUp_noWeaponAnim.PickUp_noWeaponAnim"));
 	ConstructorHelpers::FObjectFinder<UAnimSequence>Tophit(TEXT("/Game/ModularRPGHeroesPolyart/Animations/TwoHandSwordStance/Combo05_SingleTwohandSwordAnim.Combo05_SingleTwohandSwordAnim"));
-	ConstructorHelpers::FObjectFinder<UAnimSequence>Belowhit(TEXT("/Game/ModularRPGHeroesPolyart/Animations/SwordAndShieldStance/Combo04_SwordShieldAnim.Combo04_SwordShieldAnim"));
+	ConstructorHelpers::FObjectFinder<UAnimSequence>Belowhit(TEXT("/Game/ModularRPGHeroesPolyart/Animations/SwordAndShieldStance/NormalAttack01_SwordShieldAnim.NormalAttack01_SwordShieldAnim"));
+	ConstructorHelpers::FObjectFinder<UAnimSequence>NormalAttacks(TEXT("/Game/ModularRPGHeroesPolyart/Animations/SwordAndShieldStance/NormalAttack02_SwordShieldAnim.NormalAttack02_SwordShieldAnim"));
+	ConstructorHelpers::FObjectFinder<UAnimSequence>Slide(TEXT("/Game/ModularRPGHeroesPolyart/Animations/SwordAndShieldStance/Slide_SwordShieldAnim.Slide_SwordShieldAnim"));
 	
 	JumpAnimation =JumpAnim.Object;
 	RunAnimation = RunAnim.Object;
@@ -69,49 +71,54 @@ ABunAssistant::ABunAssistant()
 	IdleAnimation = IdleAnim.Object;
 	DieAnimation = DieAnim.Object;
 	WeaponSelection = SelectionWeaponAnim.Object;
-	TopHit = Tophit.Object; 
-	HitBelow =Belowhit.Object;
-	Varibl=true;
+	JumpAttack = Tophit.Object; 
+	LowAttack = Belowhit.Object;
+	NormalAttack = NormalAttacks.Object;
+	SlideAnimation = Slide.ObjMeleeWeapon;
+	Varibl=false;
 	
 	HP=112.0f;
 	GetMesh()->SetSkeletalMesh(SKmodel.Object);
-	TimeGetSwords = 0.0f;
+	TimeGetSwords = 0.0f;	
 	TimeAnimationAttack = 0.0f;
 	EnableZoneWeapon = false;
+	
 }
 
 	
 
 void ABunAssistant::GetSword()
 {	
+	GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::Yellow, "monster: no bullet actor could be spawned. is the bullet overlapping something ? " ); 
+	GetSwords = true;
 	FName fnWeaponSocket = TEXT("RightWeaponShield");
-	if(EnableZoneWeapon)
-	{
-		GetSwords = true;
-		//AnimationState();
-		AMeleeWeapon* MeleeWeapon;
-		MeleeWeapon = GetWorld()->SpawnActor<AMeleeWeapon>(ObjMeleeWeapon, FVector(), FRotator());
-		if(MeleeWeapon){
-			MeleeWeapon->Mesh->SetSimulatePhysics(false);
-			MeleeWeapon->Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
-			MeleeWeapon->Mesh->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), fnWeaponSocket);
-		}
+	AMeleeWeapon* MeleeWeapon = GetWorld()->SpawnActor<AMeleeWeapon>(ObjMeleeWeapon, FVector(), FRotator());
+	if(MeleeWeapon){
+		MeleeWeapon->Mesh->SetSimulatePhysics(false);
+		MeleeWeapon->Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+		MeleeWeapon->Mesh->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), fnWeaponSocket);
 	}
+}
 
 	
+void ABunAssistant::AnimationState(){
+	if(EnableZoneWeapon)
+	{
+		GetSwordAnimation = true;
+		GetWorldTimerManager().SetTimer(InOutHandle, this, &ABunAssistant::GetSword, 1.2, false);
+	}
 }
 
-void ABunAssistant::AnimationState(){
-	GetWorldTimerManager().SetTimer(InOutHandle, this, &ABunAssistant::GetSword, 1.0, false);
-}
-void ABunAssistant::SetSword(){GetSwords=false;}
+void ABunAssistant::SetSword(){GetSwords=false;GetSwordAnimation = false;}
 
 void ABunAssistant::MeleeAttack(){
-	if(GetWorld()->GetFirstPlayerController()->IsInputKeyDown(EKeys::NumPadFive)){
-			Attack=true;
+	Attack = true;
+	if(GetWorld()->GetFirstPlayerController()->IsInputKeyDown(EKeys::NumPadTwo)){
 			AttackBelow=true;
-	}
-		//Varibl=true;
+	}	
+	if(GetWorld()->GetFirstPlayerController()->IsInputKeyDown(EKeys::NumPadSix)&&GetWorld()->GetFirstPlayerController()->IsInputKeyDown(EKeys::NumPadFour){
+			AttackNormal=true;
+	}	
 }
 	
 void ABunAssistant::StopMeleeAttack(){Attack=false;AttackBelow=false;}
@@ -127,33 +134,38 @@ void ABunAssistant::UpdateAnimations()
 	const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
 	static UAnimSequence* DesiredAnimation;
 	
-	if(PlayerSpeedSqr>0.0f && DesiredAnimation!= RunAnimation&& fly==false && DesiredAnimation!= RunWoundedAnimation&& HP>0.0f && TimeGetSwords<=0.0f && GetSwords!=true &&
+	if(PlayerSpeedSqr>0.0f && DesiredAnimation!= RunAnimation&& fly==false && DesiredAnimation!= RunWoundedAnimation&& HP>0.0f && TimeGetSwords<=0.0f && GetSwordAnimation !=true &&
 	TimeAnimationAttack <=0.0f&&Attack==false&& AttackBelow==false){
 		DesiredAnimation =(HP>50.0f)?RunAnimation:RunWoundedAnimation;
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
 	}
 
-	else if(PlayerSpeedSqr==0.0f && DesiredAnimation != IdleAnimation && DesiredAnimation != IdleWoundedAnimation && HP>0.0f && TimeGetSwords <= 0.0f&& GetSwords!=true&&
+	else if(PlayerSpeedSqr==0.0f && DesiredAnimation != IdleAnimation && DesiredAnimation != IdleWoundedAnimation && HP>0.0f && TimeGetSwords <= 0.0f&& GetSwordAnimation !=true&&
 	TimeAnimationAttack <=0.0f&&AttackBelow==false){
 		DesiredAnimation = (HP>50.0f)?IdleAnimation:IdleWoundedAnimation;
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
 	}
-	else if(DesiredAnimation!=WeaponSelection && TimeGetSwords<=0.0f && GetSwords!=false){
+	else if(DesiredAnimation!=WeaponSelection && TimeGetSwords<=0.0f && GetSwordAnimation !=false){
 		DesiredAnimation=WeaponSelection;
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
 		TimeGetSwords = 1.4f;
 	}
-	else if(DesiredAnimation!=TopHit && GetSwords!=true && TimeAnimationAttack <= 0.0f && Attack==true && HP>0.0f&& JumpCount>=1){
-		DesiredAnimation = TopHit;
+	else if(DesiredAnimation!=JumpAttack && GetSwordAnimation !=true && TimeAnimationAttack <= 0.0f && Attack==true && HP>0.0f&& JumpCount>=1){
+		DesiredAnimation = JumpAttack;
 		TimeAnimationAttack = 1.15f;
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
 	}
-	else if( fly==true && DesiredAnimation != JumpAnimation && HP>0.0f && GetSwords!=true && TimeAnimationAttack <= 0.0f&&Attack==false){
+	else if( fly==true && DesiredAnimation != JumpAnimation && HP>0.0f && GetSwordAnimation !=true && TimeAnimationAttack <= 0.0f&&Attack==false){
 		DesiredAnimation = JumpAnimation;
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
 	}
-	else if(fly==false && DesiredAnimation != HitBelow && HP>0.0f && GetSwords!=true && TimeAnimationAttack <= 0.0f && Attack==true && TimeAnimationAttack <= 0.0f ){
-		DesiredAnimation = HitBelow;
+	else if(fly==false && DesiredAnimation != LowAttack && HP>0.0f && GetSwordAnimation !=true && AttackBelow==true && TimeAnimationAttack <= 0.0f ){
+		DesiredAnimation = LowAttack;
+		GetMesh()->PlayAnimation(DesiredAnimation, true);
+		TimeAnimationAttack = 0.7f;
+	}
+	else if(fly==false && DesiredAnimation != NormalAttack && HP>0.0f && GetSwordAnimation !=true && AttackNormal==true && TimeAnimationAttack <= 0.0f ){
+		DesiredAnimation = NormalAttack;
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
 		TimeAnimationAttack = 0.7f;
 	}
@@ -168,7 +180,7 @@ void ABunAssistant::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 {
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ABunAssistant::DoubleJump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-	PlayerInputComponent->BindAction("GetSword", IE_Pressed, this, &ABunAssistant::GetSword);
+	PlayerInputComponent->BindAction("GetSword", IE_Pressed, this, &ABunAssistant::AnimationState);
 	PlayerInputComponent->BindAction("GetSword", IE_Released, this, &ABunAssistant::SetSword);
 	PlayerInputComponent->BindAction("MeleeAttack", IE_Pressed, this, &ABunAssistant::MeleeAttack);
 	PlayerInputComponent->BindAction("MeleeAttack", IE_Released, this, &ABunAssistant::StopMeleeAttack);
@@ -180,7 +192,8 @@ void ABunAssistant::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 
 void ABunAssistant::MoveRight(float Value)
 {
-	AddMovementInput(FVector(0.f, -1.f, 0.f), Value);
+	if(Attack!=true&&TimeGetSwords<=0.0f)	
+		AddMovementInput(FVector(0.f, -1.f, 0.f), Value);
 }
 
 void ABunAssistant::DoubleJump()

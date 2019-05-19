@@ -65,9 +65,13 @@ protected:
 	
 	class UAnimSequence* WeaponSelection;
 	
-	class UAnimSequence* TopHit;
+	class UAnimSequence* JumpAttack;
 		
-	class UAnimSequence* HitBelow;
+	class UAnimSequence* LowAttack;
+	
+	class UAnimSequence* NormalAttack;
+	
+	class UAnimSequence* SlideAnimation;
 	
 	float HP;
 	
@@ -98,9 +102,13 @@ public:
 	
 	bool EnableZoneWeapon;
 	
+	bool GetSwordAnimation;
+	
 	float TimeGetSwords;
 	
 	float TimeAnimationAttack;
+	
+	bool AttackNormal;
 	
 	bool GetSwords;
 	
