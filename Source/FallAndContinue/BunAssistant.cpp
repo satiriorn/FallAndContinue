@@ -79,7 +79,7 @@ ABunAssistant::ABunAssistant()
 	TopHit = TOPHIT.Object;
 	Varibl=false;
 	
-	HP=1.0f;
+	HP=100.0f;
 	GetMesh()->SetSkeletalMesh(SKmodel.Object);
 	TimeGetSwords = 0.0f;	
 	TimeAnimationAttack = 0.0f;
@@ -89,12 +89,9 @@ ABunAssistant::ABunAssistant()
 
 	
 void ABunAssistant::StartSlide(){
-	const FVector PlayerVelocity = GetVelocity();
-	const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
-	if (PlayerSpeedSqr>500.0f){
-		StateSlide = true;
-		GetCharacterMovement()->GroundFriction = 0.1f;
-	}
+	StateSlide = true;
+	GetCharacterMovement()->GroundFriction = 1.0f;
+
 }
 void ABunAssistant::StopSlide(){
 	StateSlide = false;
