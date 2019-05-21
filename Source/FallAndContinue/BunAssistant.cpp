@@ -11,6 +11,8 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "Shield.h"
+#include "Engine.h"
 
 using namespace std;
 
@@ -85,6 +87,7 @@ ABunAssistant::ABunAssistant()
 	TimeAnimationAttack = 0.0f;
 	TimeAnimationSlide = 0.0f;
 	EnableZoneWeapon = false;
+	EnableZoneShield = false;
 }
 
 	
@@ -102,6 +105,7 @@ void ABunAssistant::GetSword()
 	GetSwords = true;
 	FName fnWeaponSocket = TEXT("RightWeaponShield");
 	AMeleeWeapon* MeleeWeapon = GetWorld()->SpawnActor<AMeleeWeapon>(ObjMeleeWeapon, FVector(), FRotator());
+	
 	if(MeleeWeapon){
 		MeleeWeapon->Mesh->SetSimulatePhysics(false);
 		MeleeWeapon->Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
@@ -110,11 +114,29 @@ void ABunAssistant::GetSword()
 }
 
 	
-void ABunAssistant::AnimationState(){
+void ABunAssistant::GetState(){
 	if(EnableZoneWeapon)
 	{
 		GetSwordAnimation = true;
 		GetWorldTimerManager().SetTimer(InOutHandle, this, &ABunAssistant::GetSword, 1.2, false);
+	}
+	if(EnableZoneShield){
+		GetSwordAnimation = true;
+		GetWorldTimerManager().SetTimer(InOutHandle, this, &ABunAssistant::GetShield, 1.2, false);
+	}
+}
+
+void ABunAssistant::GetShield(){
+	GetShields = true;
+	GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::Yellow, "monster: no bullet actor could be spawned. is the bullet overlapping something ? " ); 
+	FName fnWeaponSocket = TEXT("LeftWeaponShield");
+	AShield* Shield = GetWorld()->SpawnActor<AShield>(ObjShield, FVector(), FRotator());
+	Varibl = true;
+	if(Shield)
+	{
+		Shield->Mesh->SetSimulatePhysics(false);
+		Shield->Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+		Shield->Mesh->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), fnWeaponSocket);
 	}
 }
 
@@ -206,7 +228,7 @@ void ABunAssistant::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 {
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ABunAssistant::DoubleJump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-	PlayerInputComponent->BindAction("GetSword", IE_Pressed, this, &ABunAssistant::AnimationState);
+	PlayerInputComponent->BindAction("GetSword", IE_Pressed, this, &ABunAssistant::GetState);
 	PlayerInputComponent->BindAction("GetSword", IE_Released, this, &ABunAssistant::SetSword);
 	PlayerInputComponent->BindAction("MeleeAttack", IE_Pressed, this, &ABunAssistant::MeleeAttack);
 	PlayerInputComponent->BindAction("MeleeAttack", IE_Released, this, &ABunAssistant::StopMeleeAttack);

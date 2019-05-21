@@ -14,7 +14,7 @@ class ABunAssistant : public ACharacter
 	GENERATED_BODY()
 
 
-		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* SideViewCameraComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -41,6 +41,8 @@ protected:
 
 	void UpdateAnimations();
 	
+	void GetShield();
+	
 	void DoubleJump(); 
 	
 	void GetSword();
@@ -49,7 +51,7 @@ protected:
 	
 	void StopMeleeAttack();
 	
-	void AnimationState();
+	void GetState();
 	
 	void StartSlide();
 	
@@ -86,9 +88,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MeleeWeapon)
 		UClass* ObjMeleeWeapon;
 		
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Shield)
+		UClass* ObjShield;
 public:
 
 	float TimeAnimationSlide;
+	
 	FTimerHandle InOutHandle;
 	
 	void BeginPlay();
@@ -116,6 +121,8 @@ public:
 	
 	bool TopHitState;
 	
+	bool EnableZoneShield;
+	
 	float TimeGetSwords;
 	
 	float TimeAnimationAttack;
@@ -123,6 +130,8 @@ public:
 	bool AttackNormal;
 	
 	bool GetSwords;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool GetShields;
 	
 	bool Attack;
 	FORCEINLINE class UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }
