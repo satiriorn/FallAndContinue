@@ -53,8 +53,7 @@ public:
 
 	void Swing();
 	void Rest();
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool sss;
+
 protected:
 
 	virtual void BeginPlay() override;

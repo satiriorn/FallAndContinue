@@ -1,18 +1,16 @@
-// Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
-
 #include "BunAssistant.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "ConstructorHelpers.h"
+#include "Engine.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
-#include "Shield.h"
-#include "Engine.h"
+#include "Engine/World.h"
 
 using namespace std;
 
@@ -127,13 +125,11 @@ void ABunAssistant::GetState(){
 }
 
 void ABunAssistant::GetShield(){
-	GetShields = true;
-	GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::Yellow, "monster: no bullet actor could be spawned. is the bullet overlapping something ? " ); 
 	FName fnWeaponSocket = TEXT("LeftWeaponShield");
+	GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::Yellow, "monster: no bullet actor could be spawned. is the bullet overlapping something ? " ); 
+	//GetShields = true;
 	AShield* Shield = GetWorld()->SpawnActor<AShield>(ObjShield, FVector(), FRotator());
-	Varibl = true;
-	if(Shield)
-	{
+	if(Shield){
 		Shield->Mesh->SetSimulatePhysics(false);
 		Shield->Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 		Shield->Mesh->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), fnWeaponSocket);

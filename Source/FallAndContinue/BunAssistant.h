@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "MeleeWeapon.h"
+#include "Shield.h"
 #include "BunAssistant.generated.h"
 
 
@@ -130,7 +131,7 @@ public:
 	bool AttackNormal;
 	
 	bool GetSwords;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	
 	bool GetShields;
 	
 	bool Attack;

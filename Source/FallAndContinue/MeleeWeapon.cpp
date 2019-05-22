@@ -56,9 +56,10 @@ void AMeleeWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	static ABunAssistant* Assistant; 
+	static bool DestroyActor;
 	Assistant = Cast<ABunAssistant>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-	sss=Assistant->GetSwords;
-	if(sss)
+	DestroyActor=Assistant->GetSwords;
+	if(DestroyActor)
 		Destroy();
 }
 /*

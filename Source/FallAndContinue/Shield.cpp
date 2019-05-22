@@ -8,8 +8,6 @@
 
 AShield::AShield(const FObjectInitializer& ObjectInitializer)
 {
-	PrimaryActorTick.bCanEverTick = true;
-	
 	ConstructorHelpers::FObjectFinder<UStaticMesh>mesh(TEXT("/Game/ModularRPGHeroesPolyart/Meshes/Weapons/Shield01SM.Shield01SM"));
 	Mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this,TEXT("Mesh"));
 	Mesh->SetStaticMesh(mesh.Object);
@@ -58,7 +56,7 @@ void AShield::Tick(float DeltaTime)
 	static ABunAssistant* Assistant; 
 	static bool DestroyActor;
 	Assistant = Cast<ABunAssistant>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-	DestroyActor=Assistant->GetShields;
+	DestroyActor=Assistant->Varibl;
 	if(DestroyActor)
 		Destroy();
 }
