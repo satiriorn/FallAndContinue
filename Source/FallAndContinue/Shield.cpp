@@ -15,7 +15,7 @@ AShield::AShield(const FObjectInitializer& ObjectInitializer)
 	RootComponent = Mesh;
 	
 	SpaceEnable= ObjectInitializer.CreateDefaultSubobject<USphereComponent>(this, TEXT("SpaceEnable"));
-	SpaceEnable->InitSphereRadius(220.0f);
+	SpaceEnable->InitSphereRadius(140.0f);
 	SpaceEnable->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
 	
 	SpaceEnable->OnComponentBeginOverlap.AddDynamic(this,&AShield::OnOverlapBegin);
@@ -27,7 +27,7 @@ void AShield::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AA
 	 if((OtherActor!=nullptr)&&(OtherActor!=this)&&(OtherComp!=nullptr)){
 		 	 ABunAssistant* Assistant = Cast<ABunAssistant>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 			 Assistant->EnableZoneShield=true;
-			 GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Overlap Begin"));
+			 //GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Overlap Begin"));
 	 }
 
  }
@@ -37,7 +37,7 @@ void AShield::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AA
 	if((OtherActor!=nullptr)&&(OtherActor!=this)&&(OtherComp!=nullptr)){
 		ABunAssistant* Assistant = Cast<ABunAssistant>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 		Assistant->EnableZoneShield=false;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("End"));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("End"));
 	}
 }
 
@@ -56,7 +56,7 @@ void AShield::Tick(float DeltaTime)
 	static ABunAssistant* Assistant; 
 	static bool DestroyActor;
 	Assistant = Cast<ABunAssistant>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-	DestroyActor=Assistant->Varibl;
+	DestroyActor=Assistant->GetShields;
 	if(DestroyActor)
 		Destroy();
 }

@@ -18,7 +18,7 @@ class USkeletalMeshSocket;
 
 ABunAssistant::ABunAssistant()
 {
-	// Set size for collision capsule
+
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
 	// Don't rotate when the controller rotates.
@@ -37,7 +37,21 @@ ABunAssistant::ABunAssistant()
 
 	SideViewCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("SideViewCamera"));
 	SideViewCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
-	SideViewCameraComponent->bUsePawnControlRotation = false; // We don't want the controller rotating the camera
+	SideViewCameraComponent->bUsePawnControlRotation = false; 
+	
+	CameraBoom3D = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom3D"));
+	CameraBoom3D->SetupAttachment(RootComponent);
+	CameraBoom3D->bAbsoluteRotation = true; // Rotation of the character should not affect rotation of boom
+	CameraBoom3D->bDoCollisionTest = false;
+	CameraBoom3D->TargetArmLength = 500.f;
+	CameraBoom3D->SocketOffset = FVector(0.f, 0.f, 75.f);
+	CameraBoom3D->RelativeRotation = FRotator(0.f, 0.f, 0.f);
+	
+	Camera3D = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera3D"));
+	Camera3D->AttachToComponent(CameraBoom3D, FAttachmentTransformRules::KeepWorldTransform);
+	Camera3D->bUsePawnControlRotation = true; // We don't want the controller rotating the camera
+	
+
 
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Face in the direction we are moving..
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f); // ...at this rotation rate
@@ -47,6 +61,7 @@ ABunAssistant::ABunAssistant()
 	GetCharacterMovement()->GroundFriction = 1.0f;
 	GetCharacterMovement()->MaxWalkSpeed = 600.f;
 	GetCharacterMovement()->MaxFlySpeed = 600.f;
+	GetCharacterMovement()->GroundFriction = 10.0f;
 	
 	JumpCount = 0;
 	JumpHeight = 1100.f;
@@ -86,24 +101,26 @@ ABunAssistant::ABunAssistant()
 	TimeAnimationSlide = 0.0f;
 	EnableZoneWeapon = false;
 	EnableZoneShield = false;
+	SpaceState = false;
 }
 
 	
 void ABunAssistant::StartSlide(){
 	StateSlide = true;
-	GetCharacterMovement()->GroundFriction = 1.0f;
+	GetCharacterMovement()->GroundFriction = 0.1f;
 
 }
 void ABunAssistant::StopSlide(){
+	GetCharacterMovement()->GroundFriction = 1.0f;
 	StateSlide = false;
 }
 void ABunAssistant::GetSword()
 {	
-	GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::Yellow, "monster: no bullet actor could be spawned. is the bullet overlapping something ? " ); 
-	GetSwords = true;
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Sword"));
 	FName fnWeaponSocket = TEXT("RightWeaponShield");
+	GetSwords = true;
+	Varibl = true;
 	AMeleeWeapon* MeleeWeapon = GetWorld()->SpawnActor<AMeleeWeapon>(ObjMeleeWeapon, FVector(), FRotator());
-	
 	if(MeleeWeapon){
 		MeleeWeapon->Mesh->SetSimulatePhysics(false);
 		MeleeWeapon->Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
@@ -111,8 +128,8 @@ void ABunAssistant::GetSword()
 	}
 }
 
-	
-void ABunAssistant::GetState(){
+void ABunAssistant::GetState()
+{
 	if(EnableZoneWeapon)
 	{
 		GetSwordAnimation = true;
@@ -124,11 +141,13 @@ void ABunAssistant::GetState(){
 	}
 }
 
-void ABunAssistant::GetShield(){
+void ABunAssistant::GetShield()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Shield"));
+	AShield* Shield; 
 	FName fnWeaponSocket = TEXT("LeftWeaponShield");
-	GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::Yellow, "monster: no bullet actor could be spawned. is the bullet overlapping something ? " ); 
-	//GetShields = true;
-	AShield* Shield = GetWorld()->SpawnActor<AShield>(ObjShield, FVector(), FRotator());
+	GetShields = true;
+	Shield = GetWorld()->SpawnActor<AShield>(ObjShield, FVector(), FRotator());
 	if(Shield){
 		Shield->Mesh->SetSimulatePhysics(false);
 		Shield->Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
@@ -136,7 +155,7 @@ void ABunAssistant::GetShield(){
 	}
 }
 
-void ABunAssistant::SetSword(){GetSwords=false;GetSwordAnimation = false;}
+void ABunAssistant::SetSword(){GetSwords=false;GetSwordAnimation = false;GetShields = false;}
 
 void ABunAssistant::MeleeAttack(){
 	Attack = true;
@@ -230,17 +249,67 @@ void ABunAssistant::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction("MeleeAttack", IE_Released, this, &ABunAssistant::StopMeleeAttack);
 	PlayerInputComponent->BindAction("Slide", IE_Pressed, this, &ABunAssistant::StartSlide);
 	PlayerInputComponent->BindAction("Slide", IE_Released, this, &ABunAssistant::StopSlide);
+	PlayerInputComponent->BindAction("ChangeSpace", IE_Pressed, this, &ABunAssistant::ChangeSpace);
 	
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABunAssistant::MoveRight);
-
+	PlayerInputComponent->BindAxis("MoveForward", this, &ABunAssistant::MoveForward);
 	PlayerInputComponent->BindTouch(IE_Pressed, this, &ABunAssistant::TouchStarted);
 	PlayerInputComponent->BindTouch(IE_Released, this, &ABunAssistant::TouchStopped);
 }
 
+void ABunAssistant::ChangeSpace(){
+	SpaceState=true;
+	ChangeCamera();
+}
+
+void ABunAssistant::ChangeCamera(){
+	if(SpaceState)
+	{
+		SideViewCameraComponent->Deactivate();
+		Camera3D->Activate();
+	}
+	else{
+		SideViewCameraComponent->Activate();
+		Camera3D->Deactivate();
+	} 
+}
+
+void ABunAssistant::MoveForward(float Value)
+{
+	if(SpaceState){	
+		if ((Controller != NULL) && (Value != 0.0f))
+		{
+			// find out which way is forward
+			const FRotator Rotation = Controller->GetControlRotation();
+			const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+			// get forward vector
+			const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+			AddMovementInput(Direction, Value);
+		}
+	}
+
+}
+
 void ABunAssistant::MoveRight(float Value)
 {
-	if(Attack!=true&&TimeGetSwords<=0.0f)	
-		AddMovementInput(FVector(0.f, -1.f, 0.f), Value);
+	if(SpaceState){
+		if ( (Controller != NULL) && (Value != 0.0f) )
+		{
+			// find out which way is right
+			const FRotator Rotation = Controller->GetControlRotation();
+			const FRotator YawRotation(0, Rotation.Yaw, 0);
+		
+			// get right vector 
+			const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+			// add movement in that direction
+			AddMovementInput(Direction, Value);
+		}
+	}
+	else{
+		if(Attack!=true&&TimeGetSwords<=0.0f)	
+			AddMovementInput(FVector(0.f, -1.f, 0.f), Value);
+	}
 }
 
 void ABunAssistant::DoubleJump()
@@ -273,6 +342,7 @@ void ABunAssistant::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	UpdateAnimations();
+	DeltaTime = DeltaSeconds;
 	if(TimeGetSwords>0.0f)
 		TimeGetSwords-=DeltaSeconds;
 	if(TimeAnimationAttack>0.0f)

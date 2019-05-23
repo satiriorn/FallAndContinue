@@ -21,6 +21,12 @@ class ABunAssistant : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* CameraBoom;
 		
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class UCameraComponent* Camera3D;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class USpringArmComponent* CameraBoom3D;
+		
 	virtual void Tick(float DeltaSeconds) override;
      
 	
@@ -28,7 +34,13 @@ protected:
 
 	void MoveRight(float Val);
 	
+	void MoveForward(float Value);
+	
 	void SetSword();
+	
+	void ChangeSpace();
+	
+	void ChangeCamera();
 
 	void TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location);
 
@@ -91,6 +103,9 @@ protected:
 		
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Shield)
 		UClass* ObjShield;
+		
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Shield)
+		AActor* CameraOne;
 public:
 
 	float TimeAnimationSlide;
@@ -106,9 +121,13 @@ public:
 	
 	float JumpCount;
 	
-	float DeltaTime;
-	
 	float JumpHeight;
+	
+	float TimeBetweenCameraChanges;
+	
+	float SmoothBlendTime;
+	
+	float TimeToNextCameraChange;
 	
 	bool fly;
 	
@@ -118,6 +137,8 @@ public:
 	
 	bool StateSlide;
 	
+	bool SpaceState;
+	
 	bool GetSwordAnimation;
 	
 	bool TopHitState;
@@ -125,6 +146,8 @@ public:
 	bool EnableZoneShield;
 	
 	float TimeGetSwords;
+	
+	float DeltaTime;
 	
 	float TimeAnimationAttack;
 	

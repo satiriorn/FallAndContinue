@@ -20,7 +20,7 @@ AMeleeWeapon::AMeleeWeapon(const FObjectInitializer& ObjectInitializer)
 	RootComponent = Mesh;
 	
 	SpaceEnable= ObjectInitializer.CreateDefaultSubobject<USphereComponent>(this, TEXT("SpaceEnable"));
-	SpaceEnable->InitSphereRadius(220.0f);
+	SpaceEnable->InitSphereRadius(140.0f);
 	SpaceEnable->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
 	SpaceEnable->OnComponentBeginOverlap.AddDynamic(this,&AMeleeWeapon::OnOverlapBegin);
 	SpaceEnable->OnComponentEndOverlap.AddDynamic(this, &AMeleeWeapon::OnOverlapEnd); 
@@ -31,7 +31,6 @@ void AMeleeWeapon::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 	 if((OtherActor!=nullptr)&&(OtherActor!=this)&&(OtherComp!=nullptr)){
 		 	 ABunAssistant* Assistant = Cast<ABunAssistant>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 			 Assistant->EnableZoneWeapon=true;
-			 GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Overlap Begin"));
 	 }
 
  }
@@ -41,7 +40,6 @@ void AMeleeWeapon::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 	if((OtherActor!=nullptr)&&(OtherActor!=this)&&(OtherComp!=nullptr)){
 		ABunAssistant* Assistant = Cast<ABunAssistant>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 		Assistant->EnableZoneWeapon=false;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("End"));
 	}
 }
 
