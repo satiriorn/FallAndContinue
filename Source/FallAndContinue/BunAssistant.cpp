@@ -22,9 +22,9 @@ ABunAssistant::ABunAssistant()
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
 	// Don't rotate when the controller rotates.
-	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
-	bUseControllerRotationRoll = false;
+	bUseControllerRotationPitch = true;
+	bUseControllerRotationYaw = true;
+	bUseControllerRotationRoll = true;
 
 	// Create a camera boom attached to the root (capsule)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -38,20 +38,6 @@ ABunAssistant::ABunAssistant()
 	SideViewCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("SideViewCamera"));
 	SideViewCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	SideViewCameraComponent->bUsePawnControlRotation = false; 
-	
-	CameraBoom3D = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom3D"));
-	CameraBoom3D->SetupAttachment(RootComponent);
-	CameraBoom3D->bAbsoluteRotation = true; // Rotation of the character should not affect rotation of boom
-	CameraBoom3D->bDoCollisionTest = false;
-	CameraBoom3D->TargetArmLength = 500.f;
-	CameraBoom3D->SocketOffset = FVector(0.f, 0.f, 75.f);
-	CameraBoom3D->RelativeRotation = FRotator(0.f, 0.f, 0.f);
-	
-	Camera3D = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera3D"));
-	Camera3D->AttachToComponent(CameraBoom3D, FAttachmentTransformRules::KeepWorldTransform);
-	Camera3D->bUsePawnControlRotation = true; // We don't want the controller rotating the camera
-	
-
 
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Face in the direction we are moving..
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f); // ...at this rotation rate
@@ -101,7 +87,9 @@ ABunAssistant::ABunAssistant()
 	TimeAnimationSlide = 0.0f;
 	EnableZoneWeapon = false;
 	EnableZoneShield = false;
-	SpaceState = false;
+	SpaceState3D = false;
+	SpaceState2D = true; 
+	Rotate = 180.0f;
 }
 
 	
@@ -190,7 +178,10 @@ void ABunAssistant::UpdateAnimations()
 	if(PlayerSpeedSqr>0.0f && DesiredAnimation!= RunAnimation&& fly==false && DesiredAnimation!= RunWoundedAnimation&& HP>0.0f && TimeGetSwords<=0.0f && GetSwordAnimation !=true &&
 	TimeAnimationAttack <=0.0f&&Attack==false&& StateSlide!=true&&TimeAnimationSlide<=0.0f){
 		DesiredAnimation =(HP>50.0f)?RunAnimation:RunWoundedAnimation;
-		GetMesh()->PlayAnimation(DesiredAnimation, true);
+		if(ChangeCamera)
+			GetMesh()->PlayAnimation(IdleAnimation, true);
+		else
+			GetMesh()->PlayAnimation(DesiredAnimation, true);
 	}
 
 	else if(PlayerSpeedSqr==0.0f && DesiredAnimation != IdleAnimation && DesiredAnimation != IdleWoundedAnimation && HP>0.0f && TimeGetSwords <= 0.0f&& GetSwordAnimation !=true&&
@@ -257,33 +248,16 @@ void ABunAssistant::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 	PlayerInputComponent->BindTouch(IE_Released, this, &ABunAssistant::TouchStopped);
 }
 
-void ABunAssistant::ChangeSpace(){
-	SpaceState=true;
-	ChangeCamera();
-}
 
-void ABunAssistant::ChangeCamera(){
-	if(SpaceState)
-	{
-		SideViewCameraComponent->Deactivate();
-		Camera3D->Activate();
-	}
-	else{
-		SideViewCameraComponent->Activate();
-		Camera3D->Deactivate();
-	} 
-}
 
 void ABunAssistant::MoveForward(float Value)
 {
-	if(SpaceState){	
+	if(SpaceState3D&&Attack!=true&&TimeGetSwords<=0.0f){	
 		if ((Controller != NULL) && (Value != 0.0f))
 		{
-			// find out which way is forward
 			const FRotator Rotation = Controller->GetControlRotation();
 			const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-			// get forward vector
 			const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 			AddMovementInput(Direction, Value);
 		}
@@ -293,23 +267,19 @@ void ABunAssistant::MoveForward(float Value)
 
 void ABunAssistant::MoveRight(float Value)
 {
-	if(SpaceState){
+	if(SpaceState3D&&ChangeCamera==false&&Attack!=true&&TimeGetSwords<=0.0f){
 		if ( (Controller != NULL) && (Value != 0.0f) )
 		{
-			// find out which way is right
 			const FRotator Rotation = Controller->GetControlRotation();
 			const FRotator YawRotation(0, Rotation.Yaw, 0);
 		
-			// get right vector 
 			const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-			// add movement in that direction
+
 			AddMovementInput(Direction, Value);
 		}
 	}
-	else{
-		if(Attack!=true&&TimeGetSwords<=0.0f)	
-			AddMovementInput(FVector(0.f, -1.f, 0.f), Value);
-	}
+	else	
+		AddMovementInput(FVector(0.f, -1.f, 0.f), Value);
 }
 
 void ABunAssistant::DoubleJump()
@@ -337,11 +307,24 @@ void ABunAssistant::TouchStarted(const ETouchIndex::Type FingerIndex, const FVec
 	DoubleJump();
 }
 
-
+void ABunAssistant::ChangeSpace(){
+	if(SpaceState2D){
+		SpaceState2D = false;
+		ChangeCamera=true;
+		SpaceState3D = true;
+	}
+	else{
+		SpaceState3D = false;
+		ChangeCamera=true;
+		SpaceState2D=true;
+	}
+	
+}
 void ABunAssistant::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	UpdateAnimations();
+	SwichSpace();
 	DeltaTime = DeltaSeconds;
 	if(TimeGetSwords>0.0f)
 		TimeGetSwords-=DeltaSeconds;
@@ -349,9 +332,25 @@ void ABunAssistant::Tick(float DeltaSeconds)
 		TimeAnimationAttack-=DeltaSeconds;
 	if(TimeAnimationSlide>0.0f)
 		TimeAnimationSlide-=DeltaSeconds;
-	 //GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString(TimeGetSwords));
-}
+	
 
+		
+}
+void ABunAssistant::SwichSpace(){
+	if(SpaceState3D&&Rotate>0.0f){
+		Rotate-=1.0f;
+		CameraBoom->RelativeRotation = FRotator(0.f, Rotate, 0.f);
+		MoveForward(0.1);
+	}
+	else if(SpaceState2D&&Rotate<180.0f)
+	{	
+		Rotate+=1.0f;
+		CameraBoom->RelativeRotation = FRotator(0.f, Rotate, 0.f);
+		MoveRight(0.1);
+	}
+	else
+		ChangeCamera = false;
+}
 void ABunAssistant::TouchStopped(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
 	StopJumping();
