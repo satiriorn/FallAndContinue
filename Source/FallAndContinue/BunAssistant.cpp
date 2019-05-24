@@ -20,13 +20,11 @@ ABunAssistant::ABunAssistant()
 {
 
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-
-	// Don't rotate when the controller rotates.
-	bUseControllerRotationPitch = true;
-	bUseControllerRotationYaw = true;
-	bUseControllerRotationRoll = true;
-
-	// Create a camera boom attached to the root (capsule)
+	
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
+	
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->bAbsoluteRotation = true; // Rotation of the character should not affect rotation of boom
@@ -48,6 +46,19 @@ ABunAssistant::ABunAssistant()
 	GetCharacterMovement()->MaxWalkSpeed = 600.f;
 	GetCharacterMovement()->MaxFlySpeed = 600.f;
 	GetCharacterMovement()->GroundFriction = 10.0f;
+	
+	CameraBoom3D = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom3D"));
+	CameraBoom3D->SetupAttachment(RootComponent);
+	CameraBoom3D->bAbsoluteRotation = true; // Rotation of the character should not affect rotation of boom
+	CameraBoom3D->bDoCollisionTest = false;
+	CameraBoom3D->TargetArmLength = 500.0f;
+	CameraBoom3D->SocketOffset = FVector(0.f, 0.f, 75.f);
+	CameraBoom3D->RelativeRotation = FRotator(0.f, 0.f, 0.f);
+	CameraBoom3D->bUsePawnControlRotation = true; 
+
+	Camera3D = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera3D"));
+	Camera3D->AttachToComponent(CameraBoom3D, FAttachmentTransformRules::KeepWorldTransform);
+	Camera3D->bUsePawnControlRotation = false; // We don't want the controller rotating the camera
 	
 	JumpCount = 0;
 	JumpHeight = 1100.f;
@@ -244,6 +255,9 @@ void ABunAssistant::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 	
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABunAssistant::MoveRight);
 	PlayerInputComponent->BindAxis("MoveForward", this, &ABunAssistant::MoveForward);
+	PlayerInputComponent->BindAxis("Yaw", this, &ABunAssistant::Yaw);
+	PlayerInputComponent->BindAxis("Pitch", this, &ABunAssistant::Pitch);
+	
 	PlayerInputComponent->BindTouch(IE_Pressed, this, &ABunAssistant::TouchStarted);
 	PlayerInputComponent->BindTouch(IE_Released, this, &ABunAssistant::TouchStopped);
 }
@@ -332,8 +346,6 @@ void ABunAssistant::Tick(float DeltaSeconds)
 		TimeAnimationAttack-=DeltaSeconds;
 	if(TimeAnimationSlide>0.0f)
 		TimeAnimationSlide-=DeltaSeconds;
-	
-
 		
 }
 void ABunAssistant::SwichSpace(){
@@ -344,13 +356,35 @@ void ABunAssistant::SwichSpace(){
 	}
 	else if(SpaceState2D&&Rotate<180.0f)
 	{	
+		Camera3D->Deactivate();
+		SideViewCameraComponent->Activate();
 		Rotate+=1.0f;
 		CameraBoom->RelativeRotation = FRotator(0.f, Rotate, 0.f);
 		MoveRight(0.1);
 	}
-	else
+	else{
 		ChangeCamera = false;
+		if(SpaceState3D){
+			Camera3D->Activate();
+			SideViewCameraComponent->Deactivate();
+		}
+	}
+		
+		
 }
+	
+void ABunAssistant::Yaw(float amount)
+{
+	if(SpaceState3D)
+		AddControllerYawInput(30.f*amount * GetWorld()->GetDeltaSeconds());
+}
+
+void ABunAssistant::Pitch(float amount)
+{
+	if(SpaceState3D)
+		AddControllerPitchInput(30.f * amount * GetWorld()->GetDeltaSeconds());
+}
+
 void ABunAssistant::TouchStopped(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
 	StopJumping();

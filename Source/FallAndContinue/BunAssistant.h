@@ -21,6 +21,12 @@ class ABunAssistant : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* CameraBoom;
 		
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class UCameraComponent* Camera3D;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class USpringArmComponent* CameraBoom3D;
+		
 	virtual void Tick(float DeltaSeconds) override;
      
 	
@@ -64,6 +70,10 @@ protected:
 	
 	void StopSlide();
 	
+	void Yaw(float amount);
+	
+	void Pitch(float amount);
+	
 	class UAnimSequence* RunWoundedAnimation;
 		
 	class UAnimSequence* IdleWoundedAnimation;
@@ -103,14 +113,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Shield)
 		AActor* CameraOne;
 public:
-
+	ABunAssistant();
+	
 	float TimeAnimationSlide;
 	
 	FTimerHandle InOutHandle;
 	
 	void BeginPlay();
-	
-	ABunAssistant();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool Varibl;
@@ -158,6 +167,7 @@ public:
 	bool GetShields;
 	
 	bool Attack;
+	
 	FORCEINLINE class UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }
 	
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
