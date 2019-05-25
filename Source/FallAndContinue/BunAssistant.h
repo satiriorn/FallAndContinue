@@ -36,6 +36,10 @@ protected:
 	
 	void MoveForward(float Value);
 	
+	void Sprint();
+	
+	void StopSprint();
+	
 	void SetSword();
 	
 	void ChangeSpace();
@@ -147,6 +151,8 @@ public:
 	bool StateSlide;
 	
 	bool SpaceState3D;
+	
+	bool sprint;
 	
 	bool GetSwordAnimation;
 	

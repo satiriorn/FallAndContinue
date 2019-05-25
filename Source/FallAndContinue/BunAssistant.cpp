@@ -187,8 +187,9 @@ void ABunAssistant::UpdateAnimations()
 	static UAnimSequence* DesiredAnimation;
 	
 	if(PlayerSpeedSqr>0.0f && DesiredAnimation!= RunAnimation&& fly==false && DesiredAnimation!= RunWoundedAnimation&& HP>0.0f && TimeGetSwords<=0.0f && GetSwordAnimation !=true &&
-	TimeAnimationAttack <=0.0f&&Attack==false&& StateSlide!=true&&TimeAnimationSlide<=0.0f){
-		DesiredAnimation =(HP>50.0f)?RunAnimation:RunWoundedAnimation;
+	TimeAnimationAttack <=0.0f&&Attack==false&& StateSlide!=true&&TimeAnimationSlide<=0.0f||PlayerSpeedSqr>0.0f&& sprint==true && DesiredAnimation!= RunAnimation && HP>0.0f
+	&& TimeGetSwords<=0.0f && GetSwordAnimation !=true && TimeAnimationAttack <=0.0f&&Attack==false&& StateSlide!=true&&TimeAnimationSlide<=0.0f&&fly==false){
+		DesiredAnimation =(sprint)?RunAnimation:RunWoundedAnimation;
 		if(ChangeCamera)
 			GetMesh()->PlayAnimation(IdleAnimation, true);
 		else
@@ -252,6 +253,9 @@ void ABunAssistant::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction("Slide", IE_Pressed, this, &ABunAssistant::StartSlide);
 	PlayerInputComponent->BindAction("Slide", IE_Released, this, &ABunAssistant::StopSlide);
 	PlayerInputComponent->BindAction("ChangeSpace", IE_Pressed, this, &ABunAssistant::ChangeSpace);
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ABunAssistant::Sprint);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ABunAssistant::StopSprint);
+	
 	
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABunAssistant::MoveRight);
 	PlayerInputComponent->BindAxis("MoveForward", this, &ABunAssistant::MoveForward);
@@ -266,33 +270,29 @@ void ABunAssistant::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 
 void ABunAssistant::MoveForward(float Value)
 {
-	if(SpaceState3D&&Attack!=true&&TimeGetSwords<=0.0f){	
-		if ((Controller != NULL) && (Value != 0.0f))
-		{
-			const FRotator Rotation = Controller->GetControlRotation();
-			const FRotator YawRotation(0, Rotation.Yaw, 0);
+	if(SpaceState3D && Attack!=true && TimeGetSwords<=0.0f && Controller != NULL && Value != 0.0f)
+	{	
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-			const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-			AddMovementInput(Direction, Value);
-		}
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		AddMovementInput(Direction, Value);
 	}
 
 }
 
 void ABunAssistant::MoveRight(float Value)
 {
-	if(SpaceState3D&&ChangeCamera==false&&Attack!=true&&TimeGetSwords<=0.0f){
-		if ( (Controller != NULL) && (Value != 0.0f) )
-		{
-			const FRotator Rotation = Controller->GetControlRotation();
-			const FRotator YawRotation(0, Rotation.Yaw, 0);
-		
-			const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	if(SpaceState3D&&ChangeCamera==false&&Attack!=true&&TimeGetSwords<=0.0f&&Controller != NULL && (Value != 0.0f))
+	{
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
+	
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-			AddMovementInput(Direction, Value);
-		}
+		AddMovementInput(Direction, Value);
 	}
-	else	
+	else if(SpaceState2D&&Attack!=true&&TimeGetSwords<=0.0f&&Controller != NULL && (Value != 0.0f))	
 		AddMovementInput(FVector(0.f, -1.f, 0.f), Value);
 }
 
@@ -320,6 +320,9 @@ void ABunAssistant::TouchStarted(const ETouchIndex::Type FingerIndex, const FVec
 {
 	DoubleJump();
 }
+
+void ABunAssistant::Sprint(){if(SpaceState3D){GetCharacterMovement()->MaxWalkSpeed = 825.f;sprint=true;GetMesh()->PlayAnimation(RunAnimation, true);}}
+void ABunAssistant::StopSprint(){GetCharacterMovement()->MaxWalkSpeed = 600.f;sprint=false;}
 
 void ABunAssistant::ChangeSpace(){
 	if(SpaceState2D){
@@ -369,8 +372,7 @@ void ABunAssistant::SwichSpace(){
 			SideViewCameraComponent->Deactivate();
 		}
 	}
-		
-		
+			
 }
 	
 void ABunAssistant::Yaw(float amount)
