@@ -12,7 +12,11 @@ AMeleeWeapon::AMeleeWeapon(const FObjectInitializer& ObjectInitializer)
 {
 	AttackDamage = 1;
 	Swinging = false;
-
+	
+	PrimaryActorTick.bStartWithTickEnabled = true;
+	PrimaryActorTick.bAllowTickOnDedicatedServer = true;
+	PrimaryActorTick.bCanEverTick = true;
+	
 	ConstructorHelpers::FObjectFinder<UStaticMesh>mesh(TEXT("/Game/ModularRPGHeroesPolyart/Meshes/Weapons/Sword01SM.Sword01SM"));
 	Mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this,TEXT("Mesh"));
 	Mesh->SetStaticMesh(mesh.Object);

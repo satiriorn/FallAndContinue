@@ -14,6 +14,10 @@ AShield::AShield(const FObjectInitializer& ObjectInitializer)
 	
 	RootComponent = Mesh;
 	
+	PrimaryActorTick.bStartWithTickEnabled = true;
+	PrimaryActorTick.bAllowTickOnDedicatedServer = true;
+	PrimaryActorTick.bCanEverTick = true;
+	
 	SpaceEnable= ObjectInitializer.CreateDefaultSubobject<USphereComponent>(this, TEXT("SpaceEnable"));
 	SpaceEnable->InitSphereRadius(140.0f);
 	SpaceEnable->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);

@@ -21,6 +21,10 @@ ABunAssistant::ABunAssistant()
 
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 	
+	PrimaryActorTick.bStartWithTickEnabled = true;
+	PrimaryActorTick.bAllowTickOnDedicatedServer = true;
+	PrimaryActorTick.bCanEverTick = true;
+	
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
