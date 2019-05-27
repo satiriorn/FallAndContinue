@@ -22,8 +22,13 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category =Rotation)
 	FRotator Rotation;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category =Rotation)
 	bool rotate;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category =Rotation)
+	float speed;
+	
 	FVector Position;
 
 public:	

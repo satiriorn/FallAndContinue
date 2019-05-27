@@ -25,6 +25,7 @@ AStickWhisk::AStickWhisk(const FObjectInitializer& ObjectInitializer)
 	Rotation.Yaw = 0.0f;
 	Rotation.Pitch = 0.0f;
 	Rotation.Roll = 90.0f;
+	speed = 1.0f;
 
 	Mesh->SetMobility(EComponentMobility::Movable);
 	Mesh->SetWorldLocationAndRotation(Position, Rotation);
@@ -35,9 +36,9 @@ void AStickWhisk::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	if(rotate)
-		Rotation.Yaw+= 1.0f;
+		Rotation.Yaw+= speed;
 	else 
-		Rotation.Yaw-=1.0f;
+		Rotation.Yaw-=speed;
 	SetActorRotation(Rotation); 
 }
 
