@@ -14,7 +14,6 @@ class FALLANDCONTINUE_API AStickWhisk : public AActor
 
 		
 public:	
-	// Sets default values for this actor's properties
 	AStickWhisk(const FObjectInitializer& ObjectInitializer);
 protected:
 
