@@ -4,6 +4,7 @@
 #include "StickWhisk.h"
 #include "DrawDebugHelpers.h"
 #include "ConstructorHelpers.h"
+#include "BunAssistant.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values

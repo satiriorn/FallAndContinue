@@ -3,6 +3,8 @@
 
 #include "ButtonWinSpace.h"
 #include "FallAndContinueGameMode.h"
+#include "BunAssistant.h"
+#include "Kismet/GameplayStatics.h"
 #include "ConstructorHelpers.h"
 
 // Sets default values
@@ -12,7 +14,8 @@ AButtonWinSpace::AButtonWinSpace(const FObjectInitializer& ObjectInitializer)
 	PrimaryActorTick.bStartWithTickEnabled = true;
 	PrimaryActorTick.bAllowTickOnDedicatedServer = true;
 	PrimaryActorTick.bCanEverTick = true;
-	
+	static ConstructorHelpers::FClassFinder<ABunAssistant> BunAss(TEXT("/Game/Blueprints/Character/BunAssistantBP"));
+	Bunassistant = BunAss.Class;
 	SpaceEnable= ObjectInitializer.CreateDefaultSubobject<USphereComponent>(this, TEXT("SpaceEnable"));
 	SpaceEnable->InitSphereRadius(140.0f);
 	RootComponent = SpaceEnable;
@@ -24,6 +27,10 @@ void AButtonWinSpace::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, 
 	 if((OtherActor!=nullptr)&&(OtherActor!=this)&&(OtherComp!=nullptr)){
 		AFallAndContinueGameMode* gm = (AFallAndContinueGameMode*)GetWorld()->GetAuthGameMode();
 		gm->StateCharacter(true);
+		ABunAssistant* a = GetWorld()->SpawnActor<ABunAssistant>(Bunassistant);
+		APlayerController* OurPlayerController = UGameplayStatics::GetPlayerController(Bunassistant, 0);
+		OurPlayerController->Possess(a);
+		//OurPlayerController->SetViewTargetWithBlend(Bunassistant, 4.0);
 	 }
  }
  
