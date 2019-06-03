@@ -28,8 +28,7 @@ void AButtonWinSpace::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, 
 		AFallAndContinueGameMode* gm = (AFallAndContinueGameMode*)GetWorld()->GetAuthGameMode();
 		gm->StateCharacter(true);
 		ABunAssistant* a = GetWorld()->SpawnActor<ABunAssistant>(Bunassistant);
-		APlayerController* OurPlayerController = UGameplayStatics::GetPlayerController(Bunassistant, 0);
-		OurPlayerController->Possess(a);
+		a->RunSpeed = 3000.0f;
 		//OurPlayerController->SetViewTargetWithBlend(Bunassistant, 4.0);
 	 }
  }

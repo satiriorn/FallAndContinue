@@ -119,6 +119,11 @@ protected:
 public:
 	ABunAssistant();
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MeleeWeapon)
+	float RunSpeed;
+	
+	bool RunTunnel;
+	
 	float TimeAnimationSlide;
 	
 	FTimerHandle InOutHandle;

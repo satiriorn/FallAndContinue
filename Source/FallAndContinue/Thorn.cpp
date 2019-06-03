@@ -5,12 +5,19 @@
 AThorn::AThorn(const FObjectInitializer& ObjectInitializer):Super(ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = true;
+
 	USphereComponent* SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("RootComponent"));
-	RootComponent = SphereComponent;
 	SphereComponent->InitSphereRadius(50.0f);
 	SphereComponent->SetCollisionProfileName(TEXT("Pawn"));
-	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AThorn::OnOverlap);
+	
+	
+	ConstructorHelpers::FObjectFinder<UStaticMesh>mesh(TEXT("/Game/StylizedDesertEnv/Meshes/s_plant_10.s_plant_10"));
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	Mesh ->SetStaticMesh(mesh.Object);
+	RootComponent = Mesh;
+	SphereComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+	
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AThorn::OnOverlap);
 }
 
 void AThorn::BeginPlay()
@@ -23,7 +30,7 @@ void AThorn::OnOverlap(class UPrimitiveComponent* newComp, class AActor* OtherAc
 	float BaseDamage = 10.0f;
 	AController * EventInstigator= GetInstigatorController();
 	TSubclassOf < class UDamageType > DamageTypeClass;
-	UGameplayStatics::ApplyDamage(OtherActor, BaseDamage, EventInstigator, OtherActor, DamageTypeClass);
+	UGameplayStatics::ApplyDamage(OtherActor, BaseDamage);
 }
 
 

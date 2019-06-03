@@ -14,16 +14,18 @@ class FALLANDCONTINUE_API AThorn : public AActor
 	
 public:	
 	AThorn(const FObjectInitializer& ObjectInitializer);
+	
 	UFUNCTION()
 		void OnOverlap(class UPrimitiveComponent* newComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 protected:
 	virtual void BeginPlay() override;
 
 public:	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Mesh)
-		UStaticMeshComponent*  Mesh;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Mesh)
-		USphereComponent* SphereComponent;
+	UStaticMeshComponent*  Mesh;
+	
+	USphereComponent* SphereComponent;
+	
 	virtual void Tick(float DeltaTime) override;
 
 };
