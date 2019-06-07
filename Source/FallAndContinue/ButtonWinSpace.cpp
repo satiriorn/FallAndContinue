@@ -15,10 +15,12 @@ AButtonWinSpace::AButtonWinSpace(const FObjectInitializer& ObjectInitializer)
 	PrimaryActorTick.bStartWithTickEnabled = true;
 	PrimaryActorTick.bAllowTickOnDedicatedServer = true;
 	PrimaryActorTick.bCanEverTick = true;
+	
 	static ConstructorHelpers::FClassFinder<ABunAssistant> BunAss(TEXT("/Game/Blueprints/Character/BunAssistantBP"));
 	Bunassistant = BunAss.Class;
+	
 	SpaceEnable= ObjectInitializer.CreateDefaultSubobject<USphereComponent>(this, TEXT("SpaceEnable"));
-	SpaceEnable->InitSphereRadius(140.0f);
+	SpaceEnable->InitSphereRadius(640.0f);
 	RootComponent = SpaceEnable;
 	SpaceEnable->OnComponentBeginOverlap.AddDynamic(this,&AButtonWinSpace::OnOverlapBegin);; 
 }
