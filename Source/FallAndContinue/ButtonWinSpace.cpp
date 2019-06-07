@@ -4,6 +4,7 @@
 #include "ButtonWinSpace.h"
 #include "FallAndContinueGameMode.h"
 #include "BunAssistant.h"
+#include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "ConstructorHelpers.h"
 
@@ -25,10 +26,9 @@ AButtonWinSpace::AButtonWinSpace(const FObjectInitializer& ObjectInitializer)
 void AButtonWinSpace::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
  {
 	 if((OtherActor!=nullptr)&&(OtherActor!=this)&&(OtherComp!=nullptr)){
-		AFallAndContinueGameMode* gm = (AFallAndContinueGameMode*)GetWorld()->GetAuthGameMode();
-		gm->StateCharacter(true);
-		ABunAssistant* a = GetWorld()->SpawnActor<ABunAssistant>(Bunassistant);
-		a->RunSpeed = 3000.0f;
+		ABunAssistant* a = Cast<ABunAssistant>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+		a->Varibl = true;
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Overlap Begin"));
 		//OurPlayerController->SetViewTargetWithBlend(Bunassistant, 4.0);
 	 }
  }

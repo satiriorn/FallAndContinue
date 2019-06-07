@@ -119,8 +119,9 @@ protected:
 public:
 	ABunAssistant();
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MeleeWeapon)
-	float RunSpeed;
+	bool RunSpeed;
+	
+	bool Run;
 	
 	bool RunTunnel;
 	

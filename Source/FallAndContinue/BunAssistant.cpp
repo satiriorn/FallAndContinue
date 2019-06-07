@@ -105,7 +105,8 @@ ABunAssistant::ABunAssistant()
 	SpaceState3D = false;
 	SpaceState2D = true; 
 	Rotate = 180.0f;
-	RunSpeed = 0.0f;
+	RunSpeed = false;
+	Run = false;
 }
 
 	
@@ -354,10 +355,13 @@ void ABunAssistant::Tick(float DeltaSeconds)
 		TimeAnimationAttack-=DeltaSeconds;
 	if(TimeAnimationSlide>0.0f)
 		TimeAnimationSlide-=DeltaSeconds;
-	if(RunSpeed>0.0f){
-		GetCharacterMovement()->MaxWalkSpeed =RunSpeed;
+	if(Varibl&&Run==false){
+		GetCharacterMovement()->MaxWalkSpeed =3000.0f;
 		MoveForward(1.0);
+		Run =true;
 	}
+	if(Run)
+		MoveForward(1.0);
 }
 void ABunAssistant::SwichSpace(){
 	if(SpaceState3D&&Rotate>0.0f){

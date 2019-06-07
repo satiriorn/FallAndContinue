@@ -10,7 +10,7 @@ AThorn::AThorn(const FObjectInitializer& ObjectInitializer):Super(ObjectInitiali
 	PrimaryActorTick.bCanEverTick = true;
 	
 	USphereComponent* SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("RootComponent"));
-	SphereComponent->InitSphereRadius(42.0f);
+	SphereComponent->InitSphereRadius(28.0f);
 	
 	ConstructorHelpers::FObjectFinder<UStaticMesh>mesh(TEXT("/Game/StylizedDesertEnv/Meshes/s_plant_10.s_plant_10"));
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
@@ -18,6 +18,12 @@ AThorn::AThorn(const FObjectInitializer& ObjectInitializer):Super(ObjectInitiali
 	RootComponent = Mesh;
 	SphereComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
 	SphereComponent->SetSimulatePhysics(false);
+	FVector Position;
+	Position.X = 0.0f;
+	Position.Y = 0.0f;
+	Position.Z = 10.0f;
+	SphereComponent->SetWorldLocation(Position);
+	
 	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AThorn::OnOverlapBegin);
 }
 
@@ -29,7 +35,6 @@ void AThorn::BeginPlay()
 void AThorn::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Overlap Begin"));
 	float BaseDamage = 10.0f;
 	AController * EventInstigator= GetInstigatorController();
 	TSubclassOf < class UDamageType > DamageTypeClass;

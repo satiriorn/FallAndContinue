@@ -77,7 +77,9 @@ void AFallAndContinueCharacter::DoubleJump()
 	}
 	else
 	{
+		JumpCount++;
 		Jump();
+		
 	}
 }
 
@@ -126,11 +128,11 @@ void AFallAndContinueCharacter::UpdateAnimation()
 	{
 		GetSprite()->SetFlipbook(DesiredAnimation);
 	}
-	else if (JumpCount > 0 && DesiredAnimation != JumpAnimation&&TimeJumpAnim<=0.0f)
+	else if (JumpCount > 0 && DesiredAnimation != JumpAnimation&&TimeJumpAnim<=0.0f&&HP>0.0f)
 	{
 		DesiredAnimation = JumpAnimation;
 		GetSprite()->SetFlipbook(DesiredAnimation);
-		TimeJumpAnim = 1.3;
+		TimeJumpAnim = 0.7;
 
 	}
 	else if (NeedShoot == true && DesiredAnimation!=ShootAnimation&& TimeShootAnim<=0.0f)
