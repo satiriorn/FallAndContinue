@@ -6,7 +6,9 @@
 #include "GameFramework/Character.h"
 #include "MeleeWeapon.h"
 #include "Shield.h"
+#include "HP.h"
 #include "BunAssistant.generated.h"
+
 
 
 UCLASS(config = Game)
@@ -31,7 +33,6 @@ class ABunAssistant : public ACharacter
      
 	
 protected:
-
 	void MoveRight(float Val);
 	
 	void MoveForward(float Value);
@@ -120,6 +121,8 @@ public:
 	ABunAssistant();
 	
 	bool RunSpeed;
+	
+	UHP *Health;
 	
 	bool Run;
 	

@@ -12,6 +12,7 @@
 #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
 
+
 using namespace std;
 
 class USkeletalMeshSocket;
@@ -67,20 +68,19 @@ ABunAssistant::ABunAssistant()
 	JumpCount = 0;
 	JumpHeight = 1100.f;
 	
-	ConstructorHelpers::FObjectFinder<USkeletalMesh>SKmodel(TEXT("/Game/ModularRPGHeroesPolyart/Meshes/OneMeshCharacters/CommonerSK.CommonerSK"));
-	ConstructorHelpers::FObjectFinder<UAnimSequence>RunAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/MagicWandStance/Sprint_MagicWandAnim.Sprint_MagicWandAnim"));
-	ConstructorHelpers::FObjectFinder<UAnimSequence>RunwoundedAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/MagicWandStance/Run_MagicWandAnim.Run_MagicWandAnim"));
-	ConstructorHelpers::FObjectFinder<UAnimSequence>IdleAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/MagicWandStance/Idle_MagicWandAnim.Idle_MagicWandAnim"));
-	ConstructorHelpers::FObjectFinder<UAnimSequence>JumpAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/NoWeaponStance/JumpAir_noWeaponAnim.JumpAir_noWeaponAnim"));
-	ConstructorHelpers::FObjectFinder<UAnimSequence>IdlewoundedAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/MagicWandStance/Dizzy_MagicWandAnim.Dizzy_MagicWandAnim"));
-	ConstructorHelpers::FObjectFinder<UAnimSequence>DieAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/NoWeaponStance/Die_noWeaponAnim.Die_noWeaponAnim"));
-	ConstructorHelpers::FObjectFinder<UAnimSequence>SelectionWeaponAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/NoWeaponStance/PickUp_noWeaponAnim.PickUp_noWeaponAnim"));
-	ConstructorHelpers::FObjectFinder<UAnimSequence>Tophit(TEXT("/Game/ModularRPGHeroesPolyart/Animations/TwoHandSwordStance/Combo05_SingleTwohandSwordAnim.Combo05_SingleTwohandSwordAnim"));
-	ConstructorHelpers::FObjectFinder<UAnimSequence>Belowhit(TEXT("/Game/ModularRPGHeroesPolyart/Animations/SwordAndShieldStance/NormalAttack01_SwordShieldAnim.NormalAttack01_SwordShieldAnim"));
-	ConstructorHelpers::FObjectFinder<UAnimSequence>NormalAttacks(TEXT("/Game/ModularRPGHeroesPolyart/Animations/SwordAndShieldStance/NormalAttack02_SwordShieldAnim.NormalAttack02_SwordShieldAnim"));
-	ConstructorHelpers::FObjectFinder<UAnimSequence>Slide(TEXT("/Game/ModularRPGHeroesPolyart/Animations/SwordAndShieldStance/Slide_SwordShieldAnim.Slide_SwordShieldAnim"));
-	ConstructorHelpers::FObjectFinder<UAnimSequence>TOPHIT(TEXT("/Game/ModularRPGHeroesPolyart/Animations/DoubleSwordStance/Combo03_DoubleSwordAnim.Combo03_DoubleSwordAnim"));
-	
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh>SKmodel(TEXT("/Game/ModularRPGHeroesPolyart/Meshes/OneMeshCharacters/CommonerSK.CommonerSK"));
+	static ConstructorHelpers::FObjectFinder<UAnimSequence>RunAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/MagicWandStance/Sprint_MagicWandAnim.Sprint_MagicWandAnim"));
+	static ConstructorHelpers::FObjectFinder<UAnimSequence>RunwoundedAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/MagicWandStance/Run_MagicWandAnim.Run_MagicWandAnim"));
+	static ConstructorHelpers::FObjectFinder<UAnimSequence>IdleAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/MagicWandStance/Idle_MagicWandAnim.Idle_MagicWandAnim"));
+	static ConstructorHelpers::FObjectFinder<UAnimSequence>JumpAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/NoWeaponStance/JumpAir_noWeaponAnim.JumpAir_noWeaponAnim"));
+	static ConstructorHelpers::FObjectFinder<UAnimSequence>IdlewoundedAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/MagicWandStance/Dizzy_MagicWandAnim.Dizzy_MagicWandAnim"));
+	static ConstructorHelpers::FObjectFinder<UAnimSequence>DieAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/NoWeaponStance/Die_noWeaponAnim.Die_noWeaponAnim"));
+	static ConstructorHelpers::FObjectFinder<UAnimSequence>SelectionWeaponAnim(TEXT("/Game/ModularRPGHeroesPolyart/Animations/NoWeaponStance/PickUp_noWeaponAnim.PickUp_noWeaponAnim"));
+	static ConstructorHelpers::FObjectFinder<UAnimSequence>Tophit(TEXT("/Game/ModularRPGHeroesPolyart/Animations/TwoHandSwordStance/Combo05_SingleTwohandSwordAnim.Combo05_SingleTwohandSwordAnim"));
+	static ConstructorHelpers::FObjectFinder<UAnimSequence>Belowhit(TEXT("/Game/ModularRPGHeroesPolyart/Animations/SwordAndShieldStance/NormalAttack01_SwordShieldAnim.NormalAttack01_SwordShieldAnim"));
+	static ConstructorHelpers::FObjectFinder<UAnimSequence>NormalAttacks(TEXT("/Game/ModularRPGHeroesPolyart/Animations/SwordAndShieldStance/NormalAttack02_SwordShieldAnim.NormalAttack02_SwordShieldAnim"));
+	static ConstructorHelpers::FObjectFinder<UAnimSequence>Slide(TEXT("/Game/ModularRPGHeroesPolyart/Animations/SwordAndShieldStance/Slide_SwordShieldAnim.Slide_SwordShieldAnim"));
+	static ConstructorHelpers::FObjectFinder<UAnimSequence>TOPHIT(TEXT("/Game/ModularRPGHeroesPolyart/Animations/DoubleSwordStance/Combo03_DoubleSwordAnim.Combo03_DoubleSwordAnim"));
 	JumpAnimation =JumpAnim.Object;
 	RunAnimation = RunAnim.Object;
 	RunWoundedAnimation = RunwoundedAnim.Object;
@@ -94,7 +94,7 @@ ABunAssistant::ABunAssistant()
 	SlideAnimation = Slide.Object;
 	TopHit = TOPHIT.Object;
 	Varibl=false;
-	
+	Health = NewObject<UHP>(UHP::StaticClass());
 	HP=100.0f;
 	GetMesh()->SetSkeletalMesh(SKmodel.Object);
 	TimeGetSwords = 0.0f;	
@@ -108,7 +108,6 @@ ABunAssistant::ABunAssistant()
 	RunSpeed = false;
 	Run = false;
 }
-
 	
 void ABunAssistant::StartSlide(){
 	StateSlide = true;
@@ -241,7 +240,7 @@ void ABunAssistant::UpdateAnimations()
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
 		TimeAnimationSlide = 0.7f;
 	}
-	if(HP<=0.f && DesiredAnimation!=DieAnimation ){
+	if(Health->Health<=0.f && DesiredAnimation!=DieAnimation ){
 		DesiredAnimation=DieAnimation;
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
 	}
