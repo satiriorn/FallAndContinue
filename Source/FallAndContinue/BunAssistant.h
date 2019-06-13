@@ -102,7 +102,7 @@ protected:
 	class UAnimSequence* SlideAnimation;
 	
 	class UAnimSequence* TopHit;
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float HP;
 	
 	float Rotate;

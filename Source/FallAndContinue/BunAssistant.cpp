@@ -95,7 +95,7 @@ ABunAssistant::ABunAssistant()
 	TopHit = TOPHIT.Object;
 	Varibl=false;
 	Health = NewObject<UHP>(UHP::StaticClass());
-	HP=100.0f;
+	HP =Health->Health;
 	GetMesh()->SetSkeletalMesh(SKmodel.Object);
 	TimeGetSwords = 0.0f;	
 	TimeAnimationAttack = 0.0f;
@@ -240,7 +240,7 @@ void ABunAssistant::UpdateAnimations()
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
 		TimeAnimationSlide = 0.7f;
 	}
-	if(Health->Health<=0.f && DesiredAnimation!=DieAnimation ){
+	if(HP<=0.0f && DesiredAnimation!=DieAnimation ){
 		DesiredAnimation=DieAnimation;
 		GetMesh()->PlayAnimation(DesiredAnimation, true);
 	}
@@ -347,6 +347,7 @@ void ABunAssistant::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 	UpdateAnimations();
 	SwichSpace();
+	//HP= Health->Health;
 	DeltaTime = DeltaSeconds;
 	if(TimeGetSwords>0.0f)
 		TimeGetSwords-=DeltaSeconds;

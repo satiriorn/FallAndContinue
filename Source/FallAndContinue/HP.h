@@ -19,7 +19,7 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser);
+	void TakeDamage(AActor* DamagedActor, float Damage,const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 
 public:	
 	// Called every frame
