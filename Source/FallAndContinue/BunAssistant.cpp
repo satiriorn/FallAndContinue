@@ -4,6 +4,11 @@
 #include "Components/InputComponent.h"
 #include "ConstructorHelpers.h"
 #include "Engine.h"
+#include "Runtime/UMG/Public/UMG.h"
+#include "Runtime/UMG/Public/UMGStyle.h"
+#include "Runtime/UMG/Public/Slate/SObjectWidget.h"
+#include "Runtime/UMG/Public/IUMGModule.h"
+#include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
@@ -109,6 +114,11 @@ ABunAssistant::ABunAssistant()
 	Run = false;
 }
 	
+float ABunAssistant::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser){
+	HP -=Damage;
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Damage"));
+	return HP;
+}
 void ABunAssistant::StartSlide(){
 	StateSlide = true;
 	GetCharacterMovement()->GroundFriction = 0.1f;
@@ -131,7 +141,14 @@ void ABunAssistant::GetSword()
 		MeleeWeapon->Mesh->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), fnWeaponSocket);
 	}
 }
+void ABunAssistant::CreateWidget(){
+		static ConstructorHelpers::FClassFinder<UUserWidget>Gameover(TEXT("/Game/Blueprints/Widgets/WB_GameOver"));
+		UClass* A=Gameover.Class;
+		auto GameOver = CreateWidget<A>(GetWorld(), A::StaticClass());
+		//GameOver->AddToViewport(); // Add it to the viewport so the Construct() method in the UUserWidget:: is run.
+		//GameOver->SetVisibility(ESlateVisibility::Hidden); // Set it to hidden so its not open on spawn.
 
+}
 void ABunAssistant::GetState()
 {
 	if(EnableZoneWeapon)

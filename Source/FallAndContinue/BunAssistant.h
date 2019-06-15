@@ -79,6 +79,8 @@ protected:
 	
 	void Pitch(float amount);
 	
+	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	
 	class UAnimSequence* RunWoundedAnimation;
 		
 	class UAnimSequence* IdleWoundedAnimation;
@@ -122,6 +124,8 @@ public:
 	
 	bool RunSpeed;
 	
+	//UClass* WidgetGameOver;
+	
 	UHP *Health;
 	
 	bool Run;
@@ -133,6 +137,7 @@ public:
 	FTimerHandle InOutHandle;
 	
 	void BeginPlay();
+	void CreateWidget();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool Varibl;
