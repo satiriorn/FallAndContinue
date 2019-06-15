@@ -143,8 +143,8 @@ void ABunAssistant::GetSword()
 }
 void ABunAssistant::CreateWidget(){
 		static ConstructorHelpers::FClassFinder<UUserWidget>Gameover(TEXT("/Game/Blueprints/Widgets/WB_GameOver"));
-		UClass* A=Gameover.Class;
-		auto GameOver = CreateWidget<A>(GetWorld(), A::StaticClass());
+		Widget=Gameover.Class;
+		GameOver = CreateWidget<Widget>(GetWorld(), Widget::StaticClass());
 		//GameOver->AddToViewport(); // Add it to the viewport so the Construct() method in the UUserWidget:: is run.
 		//GameOver->SetVisibility(ESlateVisibility::Hidden); // Set it to hidden so its not open on spawn.
 

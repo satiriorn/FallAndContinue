@@ -137,6 +137,12 @@ public:
 	FTimerHandle InOutHandle;
 	
 	void BeginPlay();
+	
+	UPROPERTY(EditAnywhere, Category = "Health")
+	class UUserWidget* GameOver;
+	
+	TSubclassOf<class UUserWidget> Widget;
+	
 	void CreateWidget();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
