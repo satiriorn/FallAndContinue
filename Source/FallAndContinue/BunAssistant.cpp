@@ -100,7 +100,7 @@ ABunAssistant::ABunAssistant()
 	TopHit = TOPHIT.Object;
 	Varibl=false;
 	Health = NewObject<UHP>(UHP::StaticClass());
-	HP =Health->Health;
+	HP =100.0f;//Health->Health;
 	GetMesh()->SetSkeletalMesh(SKmodel.Object);
 	TimeGetSwords = 0.0f;	
 	TimeAnimationAttack = 0.0f;
@@ -119,15 +119,18 @@ float ABunAssistant::TakeDamage(float Damage, FDamageEvent const& DamageEvent, A
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Damage"));
 	return HP;
 }
+
 void ABunAssistant::StartSlide(){
 	StateSlide = true;
 	GetCharacterMovement()->GroundFriction = 0.1f;
 
 }
+
 void ABunAssistant::StopSlide(){
 	GetCharacterMovement()->GroundFriction = 1.0f;
 	StateSlide = false;
 }
+
 void ABunAssistant::GetSword()
 {	
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Sword"));
@@ -141,10 +144,19 @@ void ABunAssistant::GetSword()
 		MeleeWeapon->Mesh->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), fnWeaponSocket);
 	}
 }
+
 void ABunAssistant::CreateWidget(){
-		static ConstructorHelpers::FClassFinder<UUserWidget>Gameover(TEXT("/Game/Blueprints/Widgets/WB_GameOver"));
-		Widget=Gameover.Class;
-		GameOver = CreateWidget<Widget>(GetWorld(), Widget::StaticClass());
+	
+	if (WidgetTemplate) {
+		WidgetInstance = CreateWidget(this, WidgetTemplate);
+		if (!WidgetInstance->GetIsVisible())
+		{
+			WidgetInstance->AddToViewport();
+		}        
+	}
+		//static ConstructorHelpers::FClassFinder<UUserWidget>Gameover(TEXT("/Game/Blueprints/Widgets/WB_GameOver"));
+		//Widget=Gameover.Class;
+		//GameOver = CreateWidget<Widget>(GetWorld(), Widget::StaticClass());
 		//GameOver->AddToViewport(); // Add it to the viewport so the Construct() method in the UUserWidget:: is run.
 		//GameOver->SetVisibility(ESlateVisibility::Hidden); // Set it to hidden so its not open on spawn.
 

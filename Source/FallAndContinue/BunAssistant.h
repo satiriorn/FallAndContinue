@@ -124,8 +124,6 @@ public:
 	
 	bool RunSpeed;
 	
-	//UClass* WidgetGameOver;
-	
 	UHP *Health;
 	
 	bool Run;
@@ -138,10 +136,11 @@ public:
 	
 	void BeginPlay();
 	
-	UPROPERTY(EditAnywhere, Category = "Health")
-	class UUserWidget* GameOver;
-	
-	TSubclassOf<class UUserWidget> Widget;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = UI)
+	TSubclassOf<UUserWidget> WidgetTemplate;
+ 
+	UPROPERTY()
+	UUserWidget* WidgetInstance;
 	
 	void CreateWidget();
 	
