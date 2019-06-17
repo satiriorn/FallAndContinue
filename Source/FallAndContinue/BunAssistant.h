@@ -7,6 +7,11 @@
 #include "MeleeWeapon.h"
 #include "Shield.h"
 #include "HP.h"
+#include "Runtime/UMG/Public/UMG.h"
+#include "Runtime/UMG/Public/UMGStyle.h"
+#include "Runtime/UMG/Public/Slate/SObjectWidget.h"
+#include "Runtime/UMG/Public/IUMGModule.h"
+#include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 #include "BunAssistant.generated.h"
 
 
@@ -136,11 +141,11 @@ public:
 	
 	void BeginPlay();
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = UI)
-	TSubclassOf<UUserWidget> WidgetTemplate;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
+	TSubclassOf<class UUserWidget> WidgetBP;
  
 	UPROPERTY()
-	UUserWidget* WidgetInstance;
+	UUserWidget* GameOver;
 	
 	void CreateWidget();
 	
@@ -193,6 +198,7 @@ public:
 	
 	bool Attack;
 	
+	bool Dead;
 	FORCEINLINE class UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }
 	
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

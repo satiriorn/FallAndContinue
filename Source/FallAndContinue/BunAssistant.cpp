@@ -4,11 +4,7 @@
 #include "Components/InputComponent.h"
 #include "ConstructorHelpers.h"
 #include "Engine.h"
-#include "Runtime/UMG/Public/UMG.h"
-#include "Runtime/UMG/Public/UMGStyle.h"
-#include "Runtime/UMG/Public/Slate/SObjectWidget.h"
-#include "Runtime/UMG/Public/IUMGModule.h"
-#include "Runtime/UMG/Public/Blueprint/UserWidget.h"
+#include "Blueprint/UserWidget.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
@@ -112,6 +108,7 @@ ABunAssistant::ABunAssistant()
 	Rotate = 180.0f;
 	RunSpeed = false;
 	Run = false;
+	Dead = false;
 }
 	
 float ABunAssistant::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser){
@@ -147,13 +144,13 @@ void ABunAssistant::GetSword()
 
 void ABunAssistant::CreateWidget(){
 	
-	if (WidgetTemplate) {
-		WidgetInstance = CreateWidget(this, WidgetTemplate);
-		if (!WidgetInstance->GetIsVisible())
+	/*if (WidgetBP){
+		//GameOver = CreateWidget<UUserWidget>(GetWorld(), WidgetBP);
+		if (!GameOver->GetIsVisible())
 		{
-			WidgetInstance->AddToViewport();
+			GameOver->AddToViewport();
 		}        
-	}
+	}*/
 		//static ConstructorHelpers::FClassFinder<UUserWidget>Gameover(TEXT("/Game/Blueprints/Widgets/WB_GameOver"));
 		//Widget=Gameover.Class;
 		//GameOver = CreateWidget<Widget>(GetWorld(), Widget::StaticClass());
@@ -389,6 +386,8 @@ void ABunAssistant::Tick(float DeltaSeconds)
 		MoveForward(1.0);
 		Run =true;
 	}
+	if(HP>=0)
+		Dead = true;
 	if(Run)
 		MoveForward(1.0);
 }
