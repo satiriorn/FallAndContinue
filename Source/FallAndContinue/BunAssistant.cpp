@@ -108,6 +108,7 @@ ABunAssistant::ABunAssistant()
 	RunSpeed = false;
 	Run = false;
 	Dead = false;
+	StateMelee = false;
 }
 	
 float ABunAssistant::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser){
@@ -138,6 +139,7 @@ void ABunAssistant::GetSword()
 		MeleeWeapon->Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 		MeleeWeapon->Mesh->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), fnWeaponSocket);
 	}
+	StateMelee = true;
 }
 
 void ABunAssistant::CreateWidget(){

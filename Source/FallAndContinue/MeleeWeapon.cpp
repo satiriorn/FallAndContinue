@@ -56,13 +56,15 @@ void AMeleeWeapon::BeginPlay()
 void AMeleeWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	static ABunAssistant* Assistant; 
-	static bool DestroyActor;
-	DestroyActor=Assistant->GetSwords;
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("print"));
-	if(DestroyActor)
+	ABunAssistant* Assistant= Cast<ABunAssistant>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	static bool DestroyActor=false;
+	static bool StMelee =false;
+	if(Assistant){
+		DestroyActor=Assistant->GetSwords;
+		StMelee = Assistant->StateMelee;
+	}
+	if(DestroyActor&&StMelee)
 	{
 		Destroy();
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Destroy"));
 	}
 }

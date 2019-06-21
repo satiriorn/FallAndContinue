@@ -129,6 +129,8 @@ public:
 	
 	bool Run;
 	
+	bool StateMelee;
+	
 	bool RunTunnel;
 	
 	float TimeAnimationSlide;
