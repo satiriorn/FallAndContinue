@@ -48,6 +48,11 @@ protected:
 	virtual void BeginPlay() override;
 	
 public:	
+
+	FTimerHandle InOutHandle;
+	bool GetSword;
+	bool StMelee;
+	void DestroyActor();	
 	
 	virtual void Tick(float DeltaTime) override;
 	

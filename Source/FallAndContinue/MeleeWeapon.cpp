@@ -51,20 +51,25 @@ void AMeleeWeapon::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 void AMeleeWeapon::BeginPlay()
 {
 	Super::BeginPlay();
+	GetSword=false;
+	StMelee=false;
 }
 
+void AMeleeWeapon::DestroyActor(){
+	Destroy();
+}
+ 
 void AMeleeWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	ABunAssistant* Assistant= Cast<ABunAssistant>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-	static bool DestroyActor=false;
-	static bool StMelee =false;
 	if(Assistant){
-		DestroyActor=Assistant->GetSwords;
-		StMelee = Assistant->StateMelee;
+		State = Assistant->StateMelee;
 	}
-	if(DestroyActor&&StMelee)
+	if(State&&StMelee==false)
 	{
-		Destroy();
+		SpaceEnable->DestroyComponent();
+		GetWorldTimerManager().SetTimer(InOutHandle, this, &AMeleeWeapon::DestroyActor, 1.1, false);
+		StMelee = true;
 	}
 }

@@ -130,7 +130,6 @@ void ABunAssistant::StopSlide(){
 
 void ABunAssistant::GetSword()
 {	
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Sword"));
 	FName fnWeaponSocket = TEXT("RightWeaponShield");
 	GetSwords = true;
 	AMeleeWeapon* MeleeWeapon = GetWorld()->SpawnActor<AMeleeWeapon>(ObjMeleeWeapon, FVector(), FRotator());
@@ -139,7 +138,7 @@ void ABunAssistant::GetSword()
 		MeleeWeapon->Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 		MeleeWeapon->Mesh->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), fnWeaponSocket);
 	}
-	StateMelee = true;
+	StateMelee = false;
 }
 
 void ABunAssistant::CreateWidget(){
@@ -162,6 +161,7 @@ void ABunAssistant::GetState()
 {
 	if(EnableZoneWeapon)
 	{
+		StateMelee = true;
 		GetSwordAnimation = true;
 		GetWorldTimerManager().SetTimer(InOutHandle, this, &ABunAssistant::GetSword, 1.2, false);
 	}
