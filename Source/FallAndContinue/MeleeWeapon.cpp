@@ -11,7 +11,7 @@
 AMeleeWeapon::AMeleeWeapon(const FObjectInitializer& ObjectInitializer)
 {
 	AttackDamage = 1;
-	Swinging = false;
+	State = false;
 	
 	PrimaryActorTick.bStartWithTickEnabled = true;
 	PrimaryActorTick.bAllowTickOnDedicatedServer = true;
@@ -35,6 +35,7 @@ void AMeleeWeapon::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 	 if((OtherActor!=nullptr)&&(OtherActor!=this)&&(OtherComp!=nullptr)){
 		 	 ABunAssistant* Assistant = Cast<ABunAssistant>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 			 Assistant->EnableZoneWeapon=true;
+			 
 	 }
 
  }
@@ -50,7 +51,6 @@ void AMeleeWeapon::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 void AMeleeWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 void AMeleeWeapon::Tick(float DeltaTime)
@@ -58,10 +58,11 @@ void AMeleeWeapon::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	static ABunAssistant* Assistant; 
 	static bool DestroyActor;
-	Assistant = Cast<ABunAssistant>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 	DestroyActor=Assistant->GetSwords;
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("print"));
 	if(DestroyActor)
+	{
 		Destroy();
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Destroy"));
+	}
 }
-
-

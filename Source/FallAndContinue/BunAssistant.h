@@ -7,11 +7,6 @@
 #include "MeleeWeapon.h"
 #include "Shield.h"
 #include "HP.h"
-#include "Runtime/UMG/Public/UMG.h"
-#include "Runtime/UMG/Public/UMGStyle.h"
-#include "Runtime/UMG/Public/Slate/SObjectWidget.h"
-#include "Runtime/UMG/Public/IUMGModule.h"
-#include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 #include "BunAssistant.generated.h"
 
 
@@ -109,6 +104,7 @@ protected:
 	class UAnimSequence* SlideAnimation;
 	
 	class UAnimSequence* TopHit;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float HP;
 	
@@ -140,12 +136,6 @@ public:
 	FTimerHandle InOutHandle;
 	
 	void BeginPlay();
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
-	TSubclassOf<class UUserWidget> WidgetBP;
- 
-	UPROPERTY()
-	UUserWidget* GameOver;
 	
 	void CreateWidget();
 	

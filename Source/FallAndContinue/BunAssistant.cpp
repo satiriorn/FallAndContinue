@@ -4,7 +4,6 @@
 #include "Components/InputComponent.h"
 #include "ConstructorHelpers.h"
 #include "Engine.h"
-#include "Blueprint/UserWidget.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
@@ -133,7 +132,6 @@ void ABunAssistant::GetSword()
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Sword"));
 	FName fnWeaponSocket = TEXT("RightWeaponShield");
 	GetSwords = true;
-	Varibl = true;
 	AMeleeWeapon* MeleeWeapon = GetWorld()->SpawnActor<AMeleeWeapon>(ObjMeleeWeapon, FVector(), FRotator());
 	if(MeleeWeapon){
 		MeleeWeapon->Mesh->SetSimulatePhysics(false);
@@ -373,7 +371,7 @@ void ABunAssistant::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 	UpdateAnimations();
 	SwichSpace();
-	//HP= Health->Health;
+
 	DeltaTime = DeltaSeconds;
 	if(TimeGetSwords>0.0f)
 		TimeGetSwords-=DeltaSeconds;

@@ -25,7 +25,7 @@ public:
 
 	TArray<AActor*> ThingsHit;
 
-	bool Swinging;
+	bool State;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = SpaceEnable)
 		USphereComponent* SpaceEnable;
