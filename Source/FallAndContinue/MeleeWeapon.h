@@ -19,10 +19,6 @@ public:
 
 	AMeleeWeapon(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category =
-		MeleeWeapon)
-		float AttackDamage;
-
 	TArray<AActor*> ThingsHit;
 
 	bool State;
@@ -31,7 +27,7 @@ public:
 		USphereComponent* SpaceEnable;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category =MeleeWeapon)
-		UBoxComponent* ProxBox;
+		UBoxComponent* BoxComponent;
 		
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category =MeleeWeapon)
 		UStaticMeshComponent* Mesh;
@@ -42,6 +38,9 @@ public:
 
 	UFUNCTION()
 		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+		
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 
 protected:
 
@@ -52,7 +51,8 @@ public:
 	FTimerHandle InOutHandle;
 	bool GetSword;
 	bool StMelee;
-	void DestroyActor();	
+	void DestroyActor();
+
 	
 	virtual void Tick(float DeltaTime) override;
 	

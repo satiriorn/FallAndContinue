@@ -134,10 +134,11 @@ void ABunAssistant::GetSword()
 	GetSwords = true;
 	AMeleeWeapon* MeleeWeapon = GetWorld()->SpawnActor<AMeleeWeapon>(ObjMeleeWeapon, FVector(), FRotator());
 	if(MeleeWeapon){
-		MeleeWeapon->Mesh->SetSimulatePhysics(false);
-		MeleeWeapon->Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+		//MeleeWeapon->Mesh->SetSimulatePhysics(false);
+		//MeleeWeapon->Mesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 		MeleeWeapon->Mesh->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), fnWeaponSocket);
 	}
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT(""));
 	StateMelee = false;
 }
 
