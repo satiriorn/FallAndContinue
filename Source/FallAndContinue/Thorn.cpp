@@ -1,7 +1,6 @@
 #include "Thorn.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
-#include "BunAssistant.h"
 #include "Components/SphereComponent.h"
 
 AThorn::AThorn(const FObjectInitializer& ObjectInitializer):Super(ObjectInitializer)
@@ -36,7 +35,6 @@ void AThorn::BeginPlay()
 void AThorn::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	 ABunAssistant* Assistant = Cast<ABunAssistant>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 	 if((OtherActor!=nullptr)&&(OtherActor!=this)&&(OtherComp!=nullptr)){
 		float BaseDamage = 10.0f;
 		AController * EventInstigator= GetInstigatorController();

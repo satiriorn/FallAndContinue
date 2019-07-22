@@ -1,5 +1,4 @@
 #include "FallAndContinueCharacter.h"
-#include "GameInstanceBun.h"
 #include "PaperFlipbookComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "Components/CapsuleComponent.h"

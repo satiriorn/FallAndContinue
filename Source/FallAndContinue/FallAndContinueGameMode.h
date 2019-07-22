@@ -18,9 +18,4 @@ class AFallAndContinueGameMode : public AGameModeBase
 	GENERATED_BODY()
 public:
 	AFallAndContinueGameMode(const FObjectInitializer& ObjectInitializer);
-	UPROPERTY()
-	UClass* Bunassistant;
-	UPROPERTY()
-	UClass* Bun;
-	void StateCharacter(bool State);
 };

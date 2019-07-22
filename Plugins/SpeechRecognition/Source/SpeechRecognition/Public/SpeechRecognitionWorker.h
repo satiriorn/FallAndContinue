@@ -1,7 +1,7 @@
 #pragma once
 
-#include <sphinxbase/err.h>
-#include <sphinxbase/ad.h>
+#include <sphinxbase.err.h>
+#include <sphinxbase.ad.h>
 #include <pocketsphinx.h>
 #include <stdio.h>
 #include <time.h>
