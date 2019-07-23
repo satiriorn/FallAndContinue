@@ -16,8 +16,7 @@ AThorn::AThorn(const FObjectInitializer& ObjectInitializer):Super(ObjectInitiali
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh ->SetStaticMesh(mesh.Object);
 	RootComponent = Mesh;
-	SphereComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
-	SphereComponent->SetSimulatePhysics(false);
+	
 	FVector Position;
 	Position.X = 0.0f;
 	Position.Y = 0.0f;
@@ -30,6 +29,7 @@ AThorn::AThorn(const FObjectInitializer& ObjectInitializer):Super(ObjectInitiali
 void AThorn::BeginPlay()
 {
 	Super::BeginPlay();
+	SphereComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
 }
 
 void AThorn::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp,
