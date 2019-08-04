@@ -15,9 +15,7 @@ AThorn::AThorn(const FObjectInitializer& ObjectInitializer):Super(ObjectInitiali
 	ConstructorHelpers::FObjectFinder<UStaticMesh>mesh(TEXT("/Game/StylizedDesertEnv/Meshes/s_plant_10.s_plant_10"));
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh ->SetStaticMesh(mesh.Object);
-	RootComponent = Mesh;
-	//FAttachmentTransformRules TransformRules = FAttachmentTransformRules( EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, true);
-	SphereComponent->AttachToComponent(RootComponent, FAttachmentTransformRules( EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, true));
+	RootComponent = SphereComponent;
 	SphereComponent->SetSimulatePhysics(false);
 	FVector Position;
 	Position.X = 0.0f;
@@ -31,6 +29,9 @@ AThorn::AThorn(const FObjectInitializer& ObjectInitializer):Super(ObjectInitiali
 void AThorn::BeginPlay()
 {
 	Super::BeginPlay();
+	FAttachmentTransformRules TransformRules = FAttachmentTransformRules( EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, true);
+	Mesh->AttachToComponent(RootComponent, TransformRules);
+	
 }
 
 void AThorn::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp,
